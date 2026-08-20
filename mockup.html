@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capital Factory · Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f1efe8; --card:#ffffff; --border:#e3e1d7; --hover:#faf9f3;
+    --ink:#1a1917; --muted:#5f5b51; --subtle:#8a857a;
+    --gold:#f2a900; --gold-ink:#7d5900;
+    --ok-bg:#e5efe6; --ok-ink:#2f6b3f;
+    --warn-bg:#fbf1d8; --warn-ink:#7d5900;
+    --bad-bg:#f9e8e7; --bad-ink:#b3261e;
+    --neut-bg:#edebe1; --neut-ink:#5f5b51;
+    --shadow:0 1px 2px rgba(26,25,23,.05);
+  }
+  html[data-theme="dark"]{
+    --bg:#0b0b0d; --card:#1c1c20; --border:#2d2d33; --hover:#232327;
+    --ink:#f8f7f1; --muted:#c8c3b8; --subtle:#9c978c;
+    --gold:#f2a900; --gold-ink:#f2a900;
+    --ok-bg:rgba(94,160,116,.16); --ok-ink:#8cc49a;
+    --warn-bg:rgba(242,169,0,.14); --warn-ink:#f2b52e;
+    --bad-bg:rgba(229,72,77,.15); --bad-ink:#f29295;
+    --neut-bg:rgba(248,247,241,.08); --neut-ink:#c8c3b8;
+    --shadow:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:400 14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .container{max-width:1128px;margin:0 auto;padding:0 24px}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+  .topbar .container{display:flex;align-items:center;gap:20px;height:56px}
+  .wordmark{font:600 14px/1 Inter,sans-serif;letter-spacing:.06em;white-space:nowrap}
+  .wordmark span{color:var(--gold-ink);font-weight:500;letter-spacing:.16em;margin-left:8px;font-size:11px;text-transform:uppercase}
+  .gsearch{flex:0 1 260px;background:var(--bg);border:1px solid var(--border);border-radius:6px;
+    color:var(--ink);font:400 13px/1 Inter,sans-serif;padding:8px 12px;outline:none}
+  .gsearch::placeholder{color:var(--subtle)}
+  .topnav{display:flex;gap:4px;margin-left:auto}
+  .topnav button{background:none;border:0;border-radius:6px;color:var(--muted);font:500 13px/1 Inter,sans-serif;
+    padding:9px 12px;cursor:pointer;white-space:nowrap}
+  .topnav button:hover{background:var(--hover);color:var(--ink)}
+  .topnav button.active{color:var(--ink);background:var(--neut-bg);box-shadow:inset 0 -2px 0 var(--gold)}
+  .theme-btn{background:none;border:1px solid var(--border);border-radius:999px;color:var(--muted);
+    font:500 12px/1 Inter,sans-serif;padding:7px 14px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--subtle)}
+
+  /* ---------- page scaffolding ---------- */
+  .page{padding:24px 0 72px}
+  .page-h{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:8px 0 20px;flex-wrap:wrap}
+  .page-h h1{font:500 26px/1.2 Fraunces,Georgia,serif;letter-spacing:-.01em}
+  .page-h p{color:var(--muted);font-size:14px;flex-basis:100%}
+  .screen{display:none}
+  .screen.active{display:block}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+  .card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
+  .card-h h3{font:500 16px/1.3 Fraunces,Georgia,serif}
+  .card-h .sub{color:var(--subtle);font-size:12px}
+  .card-b{padding:8px 20px 14px}
+  .card-b.pad{padding:16px 20px}
+
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
+  .grid2 > div{min-width:0}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+  .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+  .statcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;box-shadow:var(--shadow)}
+  .statcard b{display:block;font:500 26px/1.1 Fraunces,Georgia,serif}
+  .statcard small{display:block;color:var(--subtle);font-size:12px;margin-top:4px}
+  .statcard .d{font-size:12px;margin-top:6px;color:var(--gold-ink);font-weight:500}
+  .statcard .d.bad{color:var(--bad-ink)}
+
+  /* ---------- pills, avatars, buttons ---------- */
+  .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;
+    font:500 12px/16px Inter,sans-serif;white-space:nowrap;background:var(--neut-bg);color:var(--neut-ink)}
+  .pill.ok{background:var(--ok-bg);color:var(--ok-ink)}
+  .pill.warn{background:var(--warn-bg);color:var(--warn-ink)}
+  .pill.bad{background:var(--bad-bg);color:var(--bad-ink)}
+  .pill .ic{font-size:10px}
+  .avatar{flex:0 0 34px;width:34px;height:34px;border-radius:7px;background:var(--neut-bg);
+    display:grid;place-items:center;font:600 12px/1 Inter,sans-serif;color:var(--muted)}
+  .avatar.round{border-radius:50%}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#1a1917;border:0;border-radius:999px;
+    font:600 13px/1 Inter,sans-serif;padding:9px 16px;cursor:pointer}
+  .btn:hover{filter:brightness(1.05)}
+  .btn.sec{background:none;color:var(--gold-ink);border:1px solid var(--gold-ink);font-weight:500}
+
+  /* ---------- list rows ---------- */
+  .lrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border)}
+  .lrow:first-child{border-top:0}
+  .lrow .tx{flex:1;min-width:0}
+  .lrow .tx h4{font:500 14px/20px Inter,sans-serif}
+  .lrow .tx h4 .mono{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+  .lrow .tx p{color:var(--muted);font-size:13px;margin-top:2px}
+  .lrow .end{margin-left:auto;display:flex;gap:6px;align-items:center;flex-shrink:0}
+
+  /* ---------- catalog table ---------- */
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
+  .search{flex:1 1 220px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--ink);
+    font:400 13px/1 Inter,sans-serif;padding:9px 12px;outline:none}
+  .search:focus{border-color:var(--subtle)}
+  .chip{background:none;border:1px solid var(--border);border-radius:999px;color:var(--muted);
+    font:500 12px/1 Inter,sans-serif;padding:8px 14px;cursor:pointer}
+  .chip:hover{color:var(--ink)}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:var(--card)}
+  .thead{display:grid;grid-template-columns:minmax(240px,2fr) 90px 130px 1.2fr 170px;gap:12px;
+    padding:10px 20px;border-bottom:1px solid var(--border);
+    font:500 11px/16px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle)}
+  .trow{display:grid;grid-template-columns:minmax(240px,2fr) 90px 130px 1.2fr 170px;gap:12px;
+    align-items:center;padding:11px 20px;border-bottom:1px solid var(--border);font-size:13px}
+  .trow:last-child{border-bottom:0}
+  .trow:hover{background:var(--hover)}
+  .trow.link{cursor:pointer}
+  .trow .ent{display:flex;align-items:center;gap:12px;min-width:0}
+  .trow .ent .nm{font:500 14px/19px Inter,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .trow.link:hover .nm{color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px}
+  .trow .ent small{display:block;color:var(--subtle);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .trow .c{color:var(--muted)}
+  .trow .st{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+  .thead .r{text-align:right}
+  @media(max-width:900px){
+    .thead{display:none}
+    .trow{grid-template-columns:1fr auto}
+    .trow .c{display:none}
+  }
+
+  /* ---------- key/value, bars, traces ---------- */
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;font-size:13px;padding:4px 0}
+  .kv dt{color:var(--subtle)}
+  .kv dd{color:var(--muted)}
+  .bar-row{display:grid;grid-template-columns:150px 1fr 64px;gap:12px;align-items:center;padding:7px 0;font-size:13px}
+  .bar-row span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-row .b{height:8px;background:var(--neut-bg);border-radius:4px;position:relative;overflow:hidden}
+  .bar-row .b i{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:4px}
+  .bar-row em{font-style:normal;text-align:right;color:var(--ink);font-weight:500;font-size:13px}
+  .prog{height:8px;background:var(--neut-bg);border-radius:4px;position:relative;overflow:hidden;min-width:80px}
+  .prog i{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:4px}
+  .prog.hot i{background:var(--bad-ink)}
+  .t-row{display:grid;grid-template-columns:1fr 70px 70px 60px;gap:10px;align-items:baseline;
+    padding:9px 0;border-top:1px solid var(--border);font-size:13px}
+  .t-row:first-child{border-top:0}
+  .t-row .n{font-weight:500}
+  .t-row .n small{color:var(--subtle);font-weight:400;margin-left:6px}
+  .t-row .m{color:var(--muted);text-align:right;font-size:12.5px}
+  .t-row.lv1 .n{padding-left:20px}
+  .t-row.lv2 .n{padding-left:40px}
+  .mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+  .note{color:var(--subtle);font-size:12px;line-height:1.55;padding:10px 0 2px}
+
+  .steps{counter-reset:s}
+  .stepcard{position:relative}
+  .stepcard .card-h::before{counter-increment:s;content:counter(s);flex:0 0 26px;height:26px;border-radius:50%;
+    background:var(--neut-bg);color:var(--muted);display:grid;place-items:center;font:600 13px/1 Inter,sans-serif}
+  textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--ink);
+    padding:12px 14px;font:400 14px/1.6 Inter,sans-serif;min-height:70px;outline:none}
+  .radio-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+
+  footer{border-top:1px solid var(--border);padding:24px 0 40px;color:var(--subtle);font-size:12px;line-height:1.6}
+  footer .container{max-width:1128px}
+  .backlink{background:none;border:0;color:var(--subtle);font:500 13px/1 Inter,sans-serif;cursor:pointer;padding:0;margin-bottom:14px}
+  .backlink:hover{color:var(--gold-ink)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="container">
+  <div class="wordmark">CAPITAL FACTORY<span>Core</span></div>
+  <input class="gsearch" placeholder="Search Core" onfocus="go('catalog');document.getElementById('q').focus();this.blur()">
+  <nav class="topnav">
+    <button data-nav="overview" class="active">Home</button>
+    <button data-nav="catalog">Catalog</button>
+    <button data-nav="intake">New</button>
+    <button data-nav="runs">Runs</button>
+    <button data-nav="usage">Usage</button>
+    <button data-nav="access">Access</button>
+    <button data-nav="systems">Systems</button>
+    <button data-nav="decisions">Decisions</button>
+  </nav>
+  <button class="theme-btn" id="themeBtn">Dark mode</button>
+</div></div>
+
+<div class="page"><div class="container">
+
+<!-- ============ OVERVIEW ============ -->
+<section class="screen active" id="overview">
+  <div class="page-h">
+    <h1>Good afternoon. The estate at a glance.</h1>
+    <p>51 packaged items across five repositories, moving under one roof: owned, versioned, evaluated, observable.</p>
+  </div>
+
+  <div class="statgrid">
+    <div class="statcard"><b>31</b><small>Applications</small><span class="d">6 on managed infra</span></div>
+    <div class="statcard"><b>16</b><small>Shared skills</small><span class="d">2 extracted to core</span></div>
+    <div class="statcard"><b>10</b><small>Duplicated capabilities</small><span class="d bad">2 drifted</span></div>
+    <div class="statcard"><b>12/51</b><small>With eval suites</small><span class="d">was 1 at baseline</span></div>
+    <div class="statcard"><b>48</b><small>Business systems</small><span class="d bad">8 without an owner</span></div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Needs attention</h3><span class="sub">4 open</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">LP</div>
+            <div class="tx"><h4>new-lp-onboarding writes the investor CRM unprotected</h4>
+            <p>Every other CRM writer uses safe-database-writes. This one never adopted it.</p></div>
+            <div class="end"><span class="pill bad">P0</span><button class="btn sec">Open ticket</button></div></div>
+          <div class="lrow"><div class="avatar">AL</div>
+            <div class="tx"><h4>AngelList compliance guardrail has diverged</h4>
+            <p>Copies in all-access-skills and texas-fund-skills no longer match.</p></div>
+            <div class="end"><span class="pill bad">P0</span></div></div>
+          <div class="lrow"><div class="avatar">SY</div>
+            <div class="tx"><h4>8 systems have no long-term owner</h4>
+            <p>24 transfers to Kyle designated; 4 complete. Assign owners this sprint.</p></div>
+            <div class="end"><span class="pill">IAM</span></div></div>
+          <div class="lrow"><div class="avatar">MS</div>
+            <div class="tx"><h4>Extraction candidate: meeting-scheduler</h4>
+            <p>Near-identical copies for Jamie, Drew, and Caroline. Evidence filed, awaiting review.</p></div>
+            <div class="end"><span class="pill warn">Proposed</span></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h3>This week in the core</h3></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">VD</div>
+            <div class="tx"><h4>voice-drafting v2.1.0 released</h4>
+            <p>Change monitor re-ran 3 consumer eval suites. All passing. Owners notified.</p></div>
+            <div class="end"><span class="pill ok">Pass</span></div></div>
+          <div class="lrow"><div class="avatar">VA</div>
+            <div class="tx"><h4>va-school moved to managed infrastructure</h4>
+            <p>First workload off an employee laptop. Rollback tested on day one.</p></div>
+            <div class="end"><span class="pill warn">Milestone</span></div></div>
+          <div class="lrow"><div class="avatar">MU</div>
+            <div class="tx"><h4>Model updater: 4 skills recommended for upgrade</h4>
+            <p>New Claude release cleared evals on 4 of 16 skills at lower cost.</p></div>
+            <div class="end"><span class="pill">Review</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>AI spend</h3><span class="sub">30 days</span></div>
+        <div class="card-b">
+          <div class="bar-row"><span>va-school</span><div class="b"><i style="width:78%"></i></div><em>$412</em></div>
+          <div class="bar-row"><span>desk-drive</span><div class="b"><i style="width:54%"></i></div><em>$286</em></div>
+          <div class="bar-row"><span>spv-campaign-responder</span><div class="b"><i style="width:31%"></i></div><em>$164</em></div>
+          <div class="bar-row"><span>inbox sweeps (all)</span><div class="b"><i style="width:22%"></i></div><em>$118</em></div>
+          <div class="bar-row"><span>everything else</span><div class="b"><i style="width:16%"></i></div><em>$87</em></div>
+          <p class="note">Total $1,067 · every call attributed to an app, environment, and key.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-b pad" style="text-align:center">
+          <p style="font:400 17px/1.4 Fraunces,Georgia,serif">Building something?</p>
+          <p style="color:var(--muted);font-size:13px;margin:6px 0 12px">The catalog gets checked first, so nothing gets built twice.</p>
+          <button class="btn" onclick="go('intake')">Start something new</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATALOG ============ -->
+<section class="screen" id="catalog">
+  <div class="page-h">
+    <h1>Catalog</h1>
+    <p>Apps own a job end to end. Skills are judgment many apps share. Tools are deterministic code. If three apps would want it, it belongs in the core.</p>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <input class="search" id="q" placeholder="Search the estate — try &ldquo;inbox&rdquo; or &ldquo;drafting&rdquo;">
+      <button class="chip active" data-f="all">All</button>
+      <button class="chip" data-f="app">Apps</button>
+      <button class="chip" data-f="skill">Skills</button>
+      <button class="chip" data-f="tool">Tools</button>
+    </div>
+    <div class="thead"><span>Name</span><span>Type</span><span>Owner</span><span>Runtime · Evals</span><span class="r">State</span></div>
+    <div id="catrows">
+      <div class="trow" data-t="app" data-s="va-school venture associate">
+        <div class="ent"><div class="avatar">VA</div><div><span class="nm">va-school</span><small>Trains venture associates end to end</small></div></div>
+        <span class="c">App</span><span class="c">Kyle</span><span class="c">Managed · 24 evals passing</span>
+        <div class="st"><span class="pill warn">Beta</span></div></div>
+      <div class="trow link" data-t="skill" data-s="safe database writes crm guardrail" onclick="go('skill')">
+        <div class="ent"><div class="avatar">SW</div><div><span class="nm">safe-database-writes</span><small>Propose-first writes with change log and approval</small></div></div>
+        <span class="c">Skill</span><span class="c">Platform</span><span class="c">Core v1.2.0 · 96% pass</span>
+        <div class="st"><span class="pill ok">Production</span></div></div>
+      <div class="trow" data-t="skill" data-s="voice drafting jamie drew caroline">
+        <div class="ent"><div class="avatar">VD</div><div><span class="nm">voice-drafting</span><small>Drafts in a person&rsquo;s voice from a voice profile</small></div></div>
+        <span class="c">Skill</span><span class="c">Platform</span><span class="c">Core v2.1.0 · 31 evals</span>
+        <div class="st"><span class="pill ok">Production</span></div></div>
+      <div class="trow" data-t="app" data-s="desk drive daily">
+        <div class="ent"><div class="avatar">DD</div><div><span class="nm">desk-drive</span><small>Runs the daily desk workflow</small></div></div>
+        <span class="c">App</span><span class="c">Caroline</span><span class="c">Laptop · no evals</span>
+        <div class="st"><span class="pill bad">Laptop</span><span class="pill">Active</span></div></div>
+      <div class="trow" data-t="app" data-s="eod inbox sweep jamie">
+        <div class="ent"><div class="avatar">EI</div><div><span class="nm">eod-inbox-sweep</span><small>End-of-day inbox triage · Jamie&rsquo;s copy</small></div></div>
+        <span class="c">App</span><span class="c">Jamie</span><span class="c">Laptop · scheduled</span>
+        <div class="st"><span class="pill warn">Duplicate ×3</span></div></div>
+      <div class="trow" data-t="app" data-s="spv campaign responder">
+        <div class="ent"><div class="avatar">SC</div><div><span class="nm">spv-campaign-responder</span><small>Answers SPV campaign inbound</small></div></div>
+        <span class="c">App</span><span class="c">Drew</span><span class="c">Laptop · scheduled</span>
+        <div class="st"><span class="pill">Active</span></div></div>
+      <div class="trow" data-t="app" data-s="new lp onboarding crm risk">
+        <div class="ent"><div class="avatar">LP</div><div><span class="nm">new-lp-onboarding</span><small>Onboards limited partners · writes CRM directly</small></div></div>
+        <span class="c">App</span><span class="c">Unassigned</span><span class="c">Laptop · no evals</span>
+        <div class="st"><span class="pill bad">Unguarded writes</span></div></div>
+      <div class="trow" data-t="skill" data-s="angellist navigator compliance">
+        <div class="ent"><div class="avatar">AN</div><div><span class="nm">angellist-navigator</span><small>AngelList access with the compliance guardrail</small></div></div>
+        <span class="c">Skill</span><span class="c">Platform</span><span class="c">2 copies · drifted</span>
+        <div class="st"><span class="pill bad">Drift</span></div></div>
+      <div class="trow" data-t="skill" data-s="meeting scheduler calendar">
+        <div class="ent"><div class="avatar">MS</div><div><span class="nm">meeting-scheduler</span><small>Books meetings under a person&rsquo;s preferences</small></div></div>
+        <span class="c">Skill</span><span class="c">Proposed</span><span class="c">3 copies · extraction filed</span>
+        <div class="st"><span class="pill warn">Candidate</span></div></div>
+      <div class="trow" data-t="skill" data-s="principal simulator judgment jamie drew">
+        <div class="ent"><div class="avatar">PS</div><div><span class="nm">principal-simulator</span><small>Predicts a principal&rsquo;s judgment before acting</small></div></div>
+        <span class="c">Skill</span><span class="c">Proposed</span><span class="c">2+ copies</span>
+        <div class="st"><span class="pill">Candidate</span></div></div>
+      <div class="trow" data-t="tool" data-s="email attachment sender">
+        <div class="ent"><div class="avatar">EA</div><div><span class="nm">email-attachment-sender</span><small>Sends mail with attachments · unit tested</small></div></div>
+        <span class="c">Tool</span><span class="c">Platform</span><span class="c">Core v1.0.2 · unit tests</span>
+        <div class="st"><span class="pill ok">Production</span></div></div>
+      <div class="trow" data-t="tool" data-s="compute grant shares math">
+        <div class="ent"><div class="avatar">GS</div><div><span class="nm">compute_grant_shares</span><small>Deterministic grant-share math</small></div></div>
+        <span class="c">Tool</span><span class="c">Platform</span><span class="c">Spec · tests pending</span>
+        <div class="st"><span class="pill">Draft</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILL DETAIL ============ -->
+<section class="screen" id="skill">
+  <button class="backlink" onclick="go('catalog')">&larr; Back to catalog</button>
+  <div class="card"><div class="card-b pad" style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+    <div class="avatar" style="width:48px;height:48px;font-size:15px">SW</div>
+    <div style="flex:1;min-width:240px">
+      <h1 style="font:500 22px/1.2 Fraunces,Georgia,serif">safe-database-writes</h1>
+      <p style="color:var(--muted);margin-top:4px">Every consequential write proposes first, logs the change, and waits for approval where policy requires it. No app touches the investor database without it.</p>
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+        <span class="pill ok">Production</span><span class="pill">Core v1.2.0</span><span class="pill">Owner: Platform</span><span class="pill ok">96% eval pass</span>
+      </div>
+    </div>
+    <button class="btn sec">Use this skill</button>
+  </div></div>
+
+  <div class="statgrid">
+    <div class="statcard"><b>96%</b><small>Eval pass · 24 cases</small></div>
+    <div class="statcard"><b>1,204</b><small>Guarded writes · 30d</small></div>
+    <div class="statcard"><b>17</b><small>Writes held for approval</small></div>
+    <div class="statcard"><b>3/4</b><small>Consumers adopted</small><span class="d bad">1 outstanding</span></div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Contract</h3></div>
+        <div class="card-b pad">
+          <dl class="kv">
+            <dt>Does</dt><dd>Propose-first writes, change-log entries, rollback references, approval gates on consequential records</dd>
+            <dt>Never</dt><dd>Deletes records, writes outside declared tables, acts without a change-log entry</dd>
+            <dt>Systems</dt><dd>Investor CRM (Airtable) via scoped service identity</dd>
+            <dt>Approval</dt><dd>Human approval required for LP and portfolio records</dd>
+            <dt>Autonomy</dt><dd>Graduated from Shadow at 94% agreement · policy floor is 90%</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Consumers</h3><span class="sub">3 of 4 adopted</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">ID</div><div class="tx"><h4>investor-db-maintenance</h4><p>v1.2.0 · evals passing</p></div><div class="end"><span class="pill ok">Adopted</span></div></div>
+          <div class="lrow"><div class="avatar">CU</div><div class="tx"><h4>contact-update-sweep</h4><p>v1.2.0 · evals passing</p></div><div class="end"><span class="pill ok">Adopted</span></div></div>
+          <div class="lrow"><div class="avatar">QU</div><div class="tx"><h4>qualification</h4><p>v1.1.3 · upgrade available</p></div><div class="end"><span class="pill warn">Behind</span></div></div>
+          <div class="lrow"><div class="avatar">LP</div><div class="tx"><h4>new-lp-onboarding</h4><p>Writes the same CRM with no guardrail. Adoption ticket open.</p></div><div class="end"><span class="pill bad">Not adopted</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Release history</h3></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>v1.2.0 <span style="color:var(--subtle);font-weight:400">· Aug 14</span></h4><p>Added rollback references. MERGE-GATE passed · 2 CODEOWNERS reviews.</p></div></div>
+          <div class="lrow"><div class="tx"><h4>v1.1.3 <span style="color:var(--subtle);font-weight:400">· Jul 30</span></h4><p>Guardrail unified from 3 drifted copies. skill-lint clean.</p></div></div>
+          <div class="lrow"><div class="tx"><h4>v1.0.0 <span style="color:var(--subtle);font-weight:400">· Jul 12</span></h4><p>Extracted from investor-db-maintenance. First core release.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTAKE ============ -->
+<section class="screen" id="intake">
+  <div class="page-h">
+    <h1>Start something new</h1>
+    <p>Describe the job. Core searches the skills you already have, assigns requirements by risk, and opens the repository with the right controls in place.</p>
+  </div>
+
+  <div class="steps" style="max-width:760px">
+    <div class="card stepcard">
+      <div class="card-h"><h3>Describe the job to be done</h3></div>
+      <div class="card-b pad">
+        <textarea>Draft LP update emails in my voice, attach the quarterly one-pager, and hold everything for my approval before sending.</textarea>
+      </div>
+    </div>
+    <div class="card stepcard">
+      <div class="card-h"><h3>Existing skill check</h3><span class="sub">3 matches</span></div>
+      <div class="card-b">
+        <div class="lrow"><div class="avatar">VD</div><div class="tx"><h4>voice-drafting</h4><p>Drafts in your voice from your profile. Covers the writing.</p></div><div class="end"><span class="pill ok">Use as-is</span></div></div>
+        <div class="lrow"><div class="avatar">EA</div><div class="tx"><h4>email-attachment-sender</h4><p>Sends mail with attachments. Covers delivery.</p></div><div class="end"><span class="pill ok">Use as-is</span></div></div>
+        <div class="lrow"><div class="avatar">IT</div><div class="tx"><h4>inbox-triage</h4><p>Close, but built for incoming mail. Extend for outbound holds.</p></div><div class="end"><span class="pill warn">Enhance</span></div></div>
+        <div class="lrow"><div class="avatar">AQ</div><div class="tx"><h4>Approval queue for outbound sends</h4><p>No existing skill covers this. Scoped as new; eval suite required.</p></div><div class="end"><span class="pill">Build new</span></div></div>
+      </div>
+    </div>
+    <div class="card stepcard">
+      <div class="card-h"><h3>Choose the autonomy posture</h3></div>
+      <div class="card-b pad">
+        <p style="color:var(--muted);font-size:13px;margin-bottom:10px">Everything starts in Shadow. Graduation requires 90% agreement with your decisions. Measured, not vibes.</p>
+        <div class="radio-row">
+          <button class="chip active">Shadow — propose only</button>
+          <button class="chip">Approve first</button>
+          <button class="chip">Autonomous — after graduation</button>
+        </div>
+      </div>
+    </div>
+    <div class="card stepcard">
+      <div class="card-h"><h3>Requirements assigned by risk</h3></div>
+      <div class="card-b pad">
+        <p style="color:var(--muted);font-size:13px;line-height:1.6">Touches email and LP data, so Core assigns: managed runtime, scoped service identity, secrets in the approved store, eval suite before beta, cost attribution on every model call. The repository opens with branch protection and CODEOWNERS already set.</p>
+        <div style="margin-top:14px"><button class="btn">Open the repository &rarr;</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RUNS ============ -->
+<section class="screen" id="runs">
+  <div class="page-h">
+    <h1>Runs &amp; observability</h1>
+    <p>Every run leaves evidence. Content stays off until the data policy is approved; metadata, tokens, and cost always record.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Scheduled &amp; headless</h3><span class="sub">last 24 hours</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">EI</div><div class="tx"><h4>eod-inbox-sweep (Jamie)</h4><p>6:02 PM · 41s · 12 messages triaged · 2 held for review</p></div><div class="end"><span class="pill ok">Succeeded</span></div></div>
+          <div class="lrow"><div class="avatar">CU</div><div class="tx"><h4>contact-update-sweep</h4><p>5:00 PM · 2m 18s · 34 proposed writes, all logged</p></div><div class="end"><span class="pill ok">Succeeded</span></div></div>
+          <div class="lrow"><div class="avatar">SC</div><div class="tx"><h4>spv-campaign-responder</h4><p>2:14 PM · AngelList session expired · alert sent to Drew</p></div><div class="end"><span class="pill bad">Failed</span></div></div>
+          <div class="lrow"><div class="avatar">DD</div><div class="tx"><h4>desk-drive</h4><p>9:00 AM · 4m 02s · still on Caroline&rsquo;s laptop, reporting via agent</p></div><div class="end"><span class="pill warn">Laptop</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Error groups</h3><span class="sub">7 days</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4 class="mono">AngelListAuthError</h4><p>spv-campaign-responder · 4 events · first seen Aug 18</p></div><div class="end"><span class="pill bad">Open</span></div></div>
+          <div class="lrow"><div class="tx"><h4 class="mono">AirtableRateLimit (429)</h4><p>contact-update-sweep · 2 events · retried, recovered</p></div><div class="end"><span class="pill">Resolved</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Trace <span class="mono" style="color:var(--subtle)">#a41f</span></h3><span class="sub">va-school · 6:02 PM</span></div>
+        <div class="card-b">
+          <div class="t-row"><span class="n">run: grade-associate-memo</span><span class="m">8.4s</span><span class="m">6,120</span><span class="m">$0.11</span></div>
+          <div class="t-row lv1"><span class="n">skill: quality-check <small>v1.3</small></span><span class="m">2.1s</span><span class="m">1,842</span><span class="m">$0.04</span></div>
+          <div class="t-row lv1"><span class="n">skill: voice-drafting <small>v2.1</small></span><span class="m">3.6s</span><span class="m">3,905</span><span class="m">$0.06</span></div>
+          <div class="t-row lv2"><span class="n">tool: email-attachment-sender</span><span class="m">320ms</span><span class="m">&mdash;</span><span class="m">&mdash;</span></div>
+          <div class="t-row lv1"><span class="n">gate: human approval <small>held · Kyle</small></span><span class="m">&mdash;</span><span class="m">&mdash;</span><span class="m">&mdash;</span></div>
+          <p class="note">Content redacted by policy. Attribution: app va-school · env production · key vk-vaschool-prod.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Evals &amp; release gates</h3></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>voice-drafting v2.1.0 · 31 cases</h4><p>LLM-judged against golden set · 97% pass · gate cleared</p></div><div class="end"><span class="pill ok">Pass</span></div></div>
+          <div class="lrow"><div class="tx"><h4>safe-database-writes v1.2.0 · 24 cases</h4><p>96% pass · 1 regression fixed before release</p></div><div class="end"><span class="pill ok">Pass</span></div></div>
+          <div class="lrow"><div class="tx"><h4>angellist-navigator · unification draft</h4><p>Eval suite being written from both drifted copies</p></div><div class="end"><span class="pill warn">In progress</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USAGE ============ -->
+<section class="screen" id="usage">
+  <div class="page-h">
+    <h1>Usage &amp; cost</h1>
+    <p>Every model call routes through the gateway with a scoped key, so spend rolls up by application, skill, and person. No mystery invoices.</p>
+  </div>
+
+  <div class="statgrid">
+    <div class="statcard"><b>$1,067</b><small>Model spend · 30 days</small><span class="d">-12% vs prior</span></div>
+    <div class="statcard"><b>9.4M</b><small>Tokens · 30 days</small></div>
+    <div class="statcard"><b>2.9s</b><small>Median latency</small></div>
+    <div class="statcard"><b>100%</b><small>Calls attributed</small><span class="d">app + env + key</span></div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Budgets</h3><span class="sub">monthly, per key</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">VA</div><div class="tx"><h4>va-school</h4><p>$412 of $750 · 60 rpm · expires Nov 1</p></div>
+            <div class="end"><div class="prog"><i style="width:55%"></i></div><span class="pill ok">Healthy</span></div></div>
+          <div class="lrow"><div class="avatar">DD</div><div class="tx"><h4>desk-drive</h4><p>$286 of $300 · 30 rpm · expires Nov 1</p></div>
+            <div class="end"><div class="prog hot"><i style="width:95%"></i></div><span class="pill bad">95% used</span></div></div>
+          <div class="lrow"><div class="avatar">SC</div><div class="tx"><h4>spv-campaign-responder</h4><p>$164 of $400 · 30 rpm · expires Nov 1</p></div>
+            <div class="end"><div class="prog"><i style="width:41%"></i></div><span class="pill ok">Healthy</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Spend by skill</h3><span class="sub">30 days</span></div>
+        <div class="card-b">
+          <div class="bar-row"><span>voice-drafting</span><div class="b"><i style="width:64%"></i></div><em>$389</em></div>
+          <div class="bar-row"><span>quality-check</span><div class="b"><i style="width:38%"></i></div><em>$231</em></div>
+          <div class="bar-row"><span>inbox-triage</span><div class="b"><i style="width:29%"></i></div><em>$176</em></div>
+          <div class="bar-row"><span>principal-simulator</span><div class="b"><i style="width:21%"></i></div><em>$127</em></div>
+          <div class="bar-row"><span>all other skills</span><div class="b"><i style="width:24%"></i></div><em>$144</em></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Model fit by capability</h3><span class="sub">model updater</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>voice-drafting</h4><p>Candidate passes 97% at 40% lower cost. Upgrade recommended.</p></div><div class="end"><button class="btn sec">Approve</button></div></div>
+          <div class="lrow"><div class="tx"><h4>safe-database-writes</h4><p>Candidate ties on evals, no cost advantage.</p></div><div class="end"><span class="pill">Hold</span></div></div>
+          <div class="lrow"><div class="tx"><h4>inbox-triage</h4><p>Smaller model passes 94% on triage-only cases. Downgrade for cost.</p></div><div class="end"><button class="btn sec">Approve</button></div></div>
+          <div class="lrow"><div class="tx"><h4>principal-simulator</h4><p>Candidate regresses on judgment agreement. Do not upgrade.</p></div><div class="end"><span class="pill">Hold</span></div></div>
+          <p class="note">On each new model release every skill&rsquo;s evals re-run automatically. Recommendations wait for a human owner.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACCESS ============ -->
+<section class="screen" id="access">
+  <div class="page-h">
+    <h1>Access &amp; identity</h1>
+    <p>Humans sign in once through Google Workspace with MFA enforced. Applications hold their own service identities and gateway keys, so revoking a person never breaks a workflow.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>People</h3><span class="sub">8 builders</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar round">K</div><div class="tx"><h4>Kyle</h4><p>Platform admin · SSO + MFA · access reviewed Aug 1</p></div><div class="end"><span class="pill warn">Admin</span></div></div>
+          <div class="lrow"><div class="avatar round">C</div><div class="tx"><h4>Caroline</h4><p>Builder · owns 11 skills, desk-drive · reviewed Aug 1</p></div><div class="end"><span class="pill">Builder</span></div></div>
+          <div class="lrow"><div class="avatar round">J</div><div class="tx"><h4>Jamie · Drew</h4><p>Builders · inbox and campaign apps · reviewed Aug 1</p></div><div class="end"><span class="pill">Builder</span></div></div>
+          <div class="lrow"><div class="avatar round">S</div><div class="tx"><h4>Sam</h4><p>Advisor · read-only, architecture review · expires Nov 6</p></div><div class="end"><span class="pill">Time-bound</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Revocation preview</h3><span class="sub">the question that must answer clean</span></div>
+        <div class="card-b">
+          <p style="color:var(--muted);font-size:13px;padding:8px 0 2px">If <b style="color:var(--ink)">Caroline</b> left tomorrow:</p>
+          <div class="lrow"><div class="tx"><h4>3 gateway keys rotate automatically</h4><p>desk-drive and 2 skills re-key with no downtime</p></div><div class="end"><span class="pill ok">Clean</span></div></div>
+          <div class="lrow"><div class="tx"><h4>11 skills transfer to named backup owner</h4><p>Ownership map already designates Kyle</p></div><div class="end"><span class="pill ok">Clean</span></div></div>
+          <div class="lrow"><div class="tx"><h4>desk-drive still runs on her laptop</h4><p>Would stop. This is why laptop runtimes are a P0 migration.</p></div><div class="end"><span class="pill bad">Breaks</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Machine identities</h3><span class="sub">gateway keys</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4 class="mono">vk-vaschool-prod</h4><p>va-school · production · claude only · $750/mo · rotated Aug 14</p></div><div class="end"><span class="pill ok">Active</span></div></div>
+          <div class="lrow"><div class="tx"><h4 class="mono">vk-deskdrive-prod</h4><p>desk-drive · production · claude only · $300/mo · rotated Aug 14</p></div><div class="end"><span class="pill ok">Active</span></div></div>
+          <div class="lrow"><div class="tx"><h4 class="mono">vk-sweeps-shared</h4><p>inbox sweeps · scheduled · claude only · $200/mo · rotated Jul 30</p></div><div class="end"><span class="pill ok">Active</span></div></div>
+          <div class="lrow"><div class="tx"><h4 class="mono">vk-legacy-drew</h4><p>personal · unscoped · any model · no budget · never rotated</p></div><div class="end"><span class="pill bad">Retire</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Secrets</h3></div>
+        <div class="card-b pad">
+          <dl class="kv">
+            <dt>Store of record</dt><dd>1Password vaults, scoped per application and environment</dd>
+            <dt>Runtime</dt><dd>Injected from the hosting platform&rsquo;s secret store; never in source control</dd>
+            <dt>Scanning</dt><dd>Secret scanning on all priority repositories; push protection on</dd>
+            <dt>Rotation</dt><dd>Documented and tested for CRM, email, and AngelList integrations</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Audit trail</h3><span class="sub">privileged actions</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>Key rotated: vk-vaschool-prod</h4><p>By platform · scheduled rotation · Aug 14, 6:00 AM</p></div><div class="end"><span class="pill">Logged</span></div></div>
+          <div class="lrow"><div class="tx"><h4>Approval granted: LP record update</h4><p>Kyle approved write held by safe-database-writes · Aug 19</p></div><div class="end"><span class="pill">Logged</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SYSTEMS ============ -->
+<section class="screen" id="systems">
+  <div class="page-h">
+    <h1>Systems &amp; ownership</h1>
+    <p>Forty-eight systems. Every one gets an owner, and access recovers even when people leave. Transfers tracked to done, not to promised.</p>
+  </div>
+
+  <div class="statgrid">
+    <div class="statcard"><b>48</b><small>Systems registered</small></div>
+    <div class="statcard"><b>24</b><small>Designated for transfer</small></div>
+    <div class="statcard"><b>4</b><small>Transfers complete</small></div>
+    <div class="statcard"><b>8</b><small>No long-term owner</small><span class="d bad">assign this sprint</span></div>
+  </div>
+
+  <div class="card">
+    <div class="thead" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <span>System</span><span>Admin today</span><span>Long-term owner</span><span>Machine identity</span><span class="r">Transfer</span></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">AL</div><span class="nm">AngelList</span></div>
+      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Personal OAuth</span>
+      <div class="st"><span class="pill warn">In progress</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">AS</div><span class="nm">Asana</span></div>
+      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Service account</span>
+      <div class="st"><span class="pill ok">Complete</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">AT</div><span class="nm">Airtable</span></div>
+      <span class="c">Fred</span><span class="c" style="color:var(--bad-ink)">Unassigned</span><span class="c">Personal API key</span>
+      <div class="st"><span class="pill bad">Not started</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">GW</div><span class="nm">Google Workspace</span></div>
+      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Scoped service identity</span>
+      <div class="st"><span class="pill warn">In progress</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">1P</div><span class="nm">1Password</span></div>
+      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">n/a · secrets root</span>
+      <div class="st"><span class="pill ok">Complete</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">GH</div><span class="nm">GitHub</span></div>
+      <span class="c">Fred</span><span class="c">Kyle</span><span class="c">Org app tokens</span>
+      <div class="st"><span class="pill warn">In progress</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">VC</div><span class="nm">Vercel</span></div>
+      <span class="c">Fred</span><span class="c" style="color:var(--bad-ink)">Unassigned</span><span class="c">Personal account</span>
+      <div class="st"><span class="pill bad">Not started</span></div></div>
+    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
+      <div class="ent"><div class="avatar">NO</div><span class="nm">Notion</span></div>
+      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Integration token</span>
+      <div class="st"><span class="pill warn">In progress</span></div></div>
+  </div>
+  <p class="note">Showing 8 of 48 · full register in production view</p>
+</section>
+
+<!-- ============ DECISIONS ============ -->
+<section class="screen" id="decisions">
+  <div class="page-h">
+    <h1>Architecture decisions</h1>
+    <p>Context, alternatives, consequences, and who approved. These eight must be made before the platform hardens.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-b">
+      <div class="lrow"><div class="avatar">01</div><div class="tx"><h4>Shared capability distribution</h4><p>Repository content, package, service, MCP tools, or hybrid. Blocks the core&rsquo;s v1 shape.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
+      <div class="lrow"><div class="avatar">02</div><div class="tx"><h4>Claude-specific or provider-neutral</h4><p>Gateway earns its keep only if attribution and budgets are required. Depends on provider policy.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
+      <div class="lrow"><div class="avatar">03</div><div class="tx"><h4>Catalog &amp; control-plane implementation</h4><p>Start GitHub-native and lightweight; adopt a portal product only when the need is proven.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
+      <div class="lrow"><div class="avatar">04</div><div class="tx"><h4>Secrets and machine identity</h4><p>1Password as store of record, runtime injection from hosting secret stores.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
+      <div class="lrow"><div class="avatar">05</div><div class="tx"><h4>Observability content &amp; retention</h4><p>Metadata always; prompt and response content off until data classification is approved.</p></div><div class="end"><span class="pill bad">Blocked · needs data-policy owner</span></div></div>
+      <div class="lrow"><div class="avatar">06</div><div class="tx"><h4>Production hosting &amp; environments</h4><p>Preserve Vercel where it fits; managed compute for scheduled and server workloads. No Kubernetes.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
+      <div class="lrow"><div class="avatar">07</div><div class="tx"><h4>Evaluation platform &amp; release gates</h4><p>Evals gate every core release. Platform selection follows the content-logging decision.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
+      <div class="lrow"><div class="avatar">08</div><div class="tx"><h4>Repository topology &amp; ownership</h4><p>One shared-core repository versus coordinated repositories. Owned with CODEOWNERS either way.</p></div><div class="end"><span class="pill">Proposed</span></div></div>
+    </div>
+  </div>
+</section>
+
+</div></div>
+
+<footer><div class="container">
+  UX mockup with illustrative data. Counts and named items drawn from the CF Read-Ahead repository survey (July 22, 2026) and the Technology Program operating mandate v0.6 (August 6, 2026); metrics for screens that do not yet exist are invented to demonstrate the target state. Not a Capital Factory production system.
+</div></footer>
+
+<script>
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.topnav button').forEach(b=>b.classList.toggle('active', b.dataset.nav===id));
+    window.scrollTo({top:0});
+  }
+  document.querySelectorAll('.topnav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
+
+  const rows=[...document.querySelectorAll('#catrows .trow')];
+  let filter='all';
+  function apply(){
+    const q=document.getElementById('q').value.toLowerCase();
+    rows.forEach(r=>{
+      const okT = filter==='all' || r.dataset.t===filter;
+      const okQ = !q || (r.dataset.s+' '+r.textContent.toLowerCase()).includes(q);
+      r.style.display = okT&&okQ ? '' : 'none';
+    });
+  }
+  document.querySelectorAll('.toolbar .chip').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.toolbar .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); filter=c.dataset.f; apply();
+  }));
+  document.getElementById('q').addEventListener('input',apply);
+
+  const themeBtn=document.getElementById('themeBtn');
+  function setTheme(t){
+    document.documentElement.dataset.theme=t;
+    themeBtn.textContent = t==='light' ? 'Dark mode' : 'Light mode';
+  }
+  themeBtn.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light'));
+</script>
+</body>
+</html>
