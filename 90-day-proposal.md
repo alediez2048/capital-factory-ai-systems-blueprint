@@ -29,6 +29,7 @@ Indicative period: Days 1-20
 - Assess VA School or the selected priority application's current condition.
 - Identify critical identity, ownership, secrets, and hosting risks.
 - Validate the shared-core architecture and select the first capability extraction.
+- Run the distribution spike: package one existing skill through the Claude private plugin marketplace and test version pinning, rollback, and telemetry (feeds ADR-001 and ADR-002; see technical-stack.md).
 
 ### Outputs
 
@@ -36,6 +37,7 @@ Indicative period: Days 1-20
 - Stakeholder, owner, administrator, and POC map.
 - Current-state application, deployment, identity, and data-flow map.
 - Immediate-risk backlog.
+- Distribution spike result with a recommendation for ADR-001.
 - Approved architecture decisions required for Phase 2.
 - Baseline acceptance criteria.
 

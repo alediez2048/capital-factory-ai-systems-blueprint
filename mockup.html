@@ -658,12 +658,12 @@
 <section class="screen" id="decisions">
   <div class="page-h">
     <h1>Architecture decisions</h1>
-    <p>Context, alternatives, consequences, and who approved. These eight must be made before the platform hardens.</p>
+    <p>Context, alternatives, consequences, and who approved. These nine must be made before the platform hardens.</p>
   </div>
 
   <div class="card">
     <div class="card-b">
-      <div class="lrow"><div class="avatar">01</div><div class="tx"><h4>Shared capability distribution</h4><p>Repository content, package, service, MCP tools, or hybrid. Blocks the core&rsquo;s v1 shape.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
+      <div class="lrow"><div class="avatar">01</div><div class="tx"><h4>Shared capability distribution</h4><p>Repository content, package, MCP tools, managed plugin marketplace, or hybrid. Spike scheduled against the Claude private marketplace.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
       <div class="lrow"><div class="avatar">02</div><div class="tx"><h4>Claude-specific or provider-neutral</h4><p>Gateway earns its keep only if attribution and budgets are required. Depends on provider policy.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
       <div class="lrow"><div class="avatar">03</div><div class="tx"><h4>Catalog &amp; control-plane implementation</h4><p>Start GitHub-native and lightweight; adopt a portal product only when the need is proven.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
       <div class="lrow"><div class="avatar">04</div><div class="tx"><h4>Secrets and machine identity</h4><p>1Password as store of record, runtime injection from hosting secret stores.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
@@ -671,6 +671,7 @@
       <div class="lrow"><div class="avatar">06</div><div class="tx"><h4>Production hosting &amp; environments</h4><p>Preserve Vercel where it fits; managed compute for scheduled and server workloads. No Kubernetes.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
       <div class="lrow"><div class="avatar">07</div><div class="tx"><h4>Evaluation platform &amp; release gates</h4><p>Evals gate every core release. Platform selection follows the content-logging decision.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
       <div class="lrow"><div class="avatar">08</div><div class="tx"><h4>Repository topology &amp; ownership</h4><p>One shared-core repository versus coordinated repositories. Owned with CODEOWNERS either way.</p></div><div class="end"><span class="pill">Proposed</span></div></div>
+      <div class="lrow"><div class="avatar">09</div><div class="tx"><h4>Platform posture</h4><p>Assemble commodity layers, build only the CF-specific thin layer. End-to-end agent platforms and full scratch-build considered and set aside; reopening conditions recorded.</p></div><div class="end"><span class="pill warn">Proposed</span></div></div>
     </div>
   </div>
 </section>

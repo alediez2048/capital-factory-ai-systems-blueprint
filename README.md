@@ -47,7 +47,7 @@ Unless explicitly marked verified or approved, architecture and technology selec
 | [discovery.md](discovery.md) | Essential questions and access needed for the initial audit |
 | [requirements.md](requirements.md) | Proposed production, security, AI, and operational requirements |
 | [system-design.md](system-design.md) | Conceptual target architecture and system boundaries |
-| [technical-stack.md](technical-stack.md) | Candidate technologies, tradeoffs, and validation gates |
+| [technical-stack.md](technical-stack.md) | Platform posture (assemble and build thin), rejected alternatives, candidate components, and validation gates |
 | [90-day-proposal.md](90-day-proposal.md) | Proposed phased engagement and measurable outcomes |
 | [sources/README.md](sources/README.md) | Register of materials used to build the blueprint |
 

@@ -97,7 +97,7 @@ The application catalog, ownership, production-readiness scorecards, health, err
 
 ## Decisions still required
 
-1. Shared-capability distribution: repository content, package, service, MCP, or hybrid.
+1. Shared-capability distribution: repository content, package, service, MCP, managed plugin marketplace, or hybrid. The Claude Enterprise private plugin marketplace is a candidate because it distributes the format the estate already uses; see technical-stack.md for the Phase 1 spike that tests it.
 2. Repository topology: one shared-core repository, monorepo, or coordinated repositories.
 3. Claude-specific versus provider-neutral model access.
 4. Identity provider and machine-identity strategy.
