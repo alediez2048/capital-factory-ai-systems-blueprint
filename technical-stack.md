@@ -49,6 +49,40 @@ What remains genuinely Capital Factory's to build is short and portable across e
 
 Conditions that would reopen this posture, to be recorded in ADR-009: a decision to leave Claude Code as the authoring environment; headcount growth that makes per-seat platform pricing cheaper than operator maintenance; or a security mandate requiring a vendor-managed boundary rather than a self-managed one.
 
+## Reference stack
+
+Concrete answer to "what would this actually run on." Every row is a candidate pending discovery, and the point of the table is how few rows say ours.
+
+| Layer | Proposal | Status |
+| --- | --- | --- |
+| Source of truth | GitHub, unchanged | existing |
+| Scheduling | GitHub Actions on a cron | existing |
+| Model store | Flat files in a repository, or Postgres if it outgrows that | ours |
+| Capability descriptions | Written to be read by a model, generated and reviewed | ours |
+| Semantic search | Off-the-shelf embeddings plus a vector index | bought |
+| MCP server | TypeScript MCP SDK, deployed on Vercel or Railway | thin |
+| Evaluations | The existing eval suite, wired into MERGE-GATE as a release gate | existing |
+| Operator console | A static page reading the model | thin |
+| Observability | OpenTelemetry into whichever backend is selected | bought |
+| Identity and secrets | Whatever the IT and security engagement lands on | external |
+
+Two rows are genuinely ours, and one of those is prose rather than code. Everything else is a scheduled job, a standard protocol, or something Capital Factory already runs.
+
+Indicative cost: roughly $100 to $400 per month self-hosted, excluding model spend. See the fuller sketch below.
+
+### The six components
+
+Named so the design can be discussed as parts rather than as a diagram. Detail in `system-design.md`.
+
+1. **The reader.** Scheduled, read-only. Regenerates everything from source.
+2. **The organizational model.** Applications, capabilities, tools, deployments, data sources, plus consumer and similarity edges.
+3. **The semantic index.** Embeddings over capability descriptions, because names are the least reliable signal in an estate organized by person.
+4. **The MCP server.** Six tools, metadata only, never the data a capability touches.
+5. **The weekly pass.** Overlap and drift detection, the four-criterion test, a ranked queue with reasoning.
+6. **The operator console.** One user. The queue, coverage gaps, and decisions.
+
+Only items 2 and 4 involve writing anything substantial, and item 4 is a thin wrapper over a protocol Anthropic maintains.
+
 ## Decision standard
 
 Component choices within this posture should be evaluated against:

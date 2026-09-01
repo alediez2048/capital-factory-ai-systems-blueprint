@@ -49,12 +49,21 @@ Cross-repository understanding, duplicate detection, and skill packaging will ve
 | [90-day-proposal.md](90-day-proposal.md) | Five-stage implementation sequence, the MVP, and an acceptance test per stage |
 | [discovery.md](discovery.md) | What is still unknown, what the session answered, and what moved out of scope |
 | [technical-stack.md](technical-stack.md) | Platform posture, rejected alternatives, candidate components |
-| [prior-art.md](prior-art.md) | Survey of platforms that solve part of this, and why none is adopted wholesale |
+| [prior-art.md](prior-art.md) | Market survey: three converging categories, why all of them govern after the fact, and what that leaves |
+| [cf-organizational-memory.pdf](cf-organizational-memory.pdf) | Presentation of the whole argument, 24 slides. Source file alongside it |
 | [mockup.html](mockup.html) | Working concept of the operator console. Illustrative data only |
 | [deepresearch.md](deepresearch.md) | Background on Capital Factory, its portfolio, and its market position |
 | [styleguide.md](styleguide.md) | Digital style guide |
 | [voice.md](voice.md) | Writing voice |
 | [sources/README.md](sources/README.md) | Register of materials used |
+
+## The market
+
+Three established categories are converging on this shape: internal developer portals, agent management platforms, and AI supply chain and identity products. Several well-funded companies have built the internal catalog this project originally proposed.
+
+Every one of them governs what already exists. Discover, inventory, assign owners, monitor, report, all after something is built. None is present at the moment somebody decides to build, which means none of them can stop a fourth copy from being written.
+
+That is the gap, it is small, and it can sit on top of whichever of those products an organization already owns. `prior-art.md` has the survey and the four criteria that would change this conclusion.
 
 ## Evidence labels
 

@@ -1,108 +1,143 @@
-# Prior Art: Platforms That Already Solve Part of This
+# Prior Art: What Already Exists, and What Does Not
 
-Status: Market survey supporting ADR-009. All vendor claims are `Reported` from vendor documentation, pricing pages, and third-party analysis; none are independently verified.
-Last updated: August 20, 2026
-Question this document answers: before Capital Factory builds anything, is someone already selling or giving away a governed catalog for internal AI capabilities, and should we buy it instead?
+Status: Market survey supporting the build recommendation.
+Revised September 2026. Supersedes the earlier survey, which was broader but framed the question less usefully.
+
+---
 
 ## Why this document exists
 
-`technical-stack.md` proposes assembling a thin control plane rather than adopting an end-to-end platform. That recommendation is only credible if the alternative was genuinely searched for rather than waved away. This document is that search: open-source and commercial products whose pitch overlaps with what Capital Factory needs, what each actually delivers, and why the recommendation survives.
+Before recommending that Capital Factory build anything, the honest first move is to go looking for the product that already does it. This records that search, what it found, and the one thing it did not find.
 
-The short answer: the product category Capital Factory needs exists, it is roughly eighteen months old, and every mature entrant in it is priced and shaped for organizations two orders of magnitude larger. The affordable products solve a different problem than the one Capital Factory has.
+The short version: this is not an invented category. Three established markets are converging on almost exactly the shape described in `system-design.md`, several of the entrants are well funded, and one of them has built something very close to the internal catalog this project originally proposed. That is a real finding and it changes the recommendation, though not in the direction it first appears to.
 
-## The category confusion, and why it matters
+---
 
-Vendor listicles collapse four distinct product categories into "AI governance." They are not interchangeable, and only one is the category in question.
+## Three markets converging on one shape
 
-| Category | What it governs | Representative products | Relevant here |
-| --- | --- | --- | --- |
-| Agent registry / control plane | Which capabilities exist, who owns them, who may call them | Credal Agent Registry, AWS Agent Registry, Glean Agent Governance | Yes. This is the category. |
-| LLM observability and evaluation | What happened at runtime: traces, cost, eval scores | Langfuse, Vellum, Galileo, Orq.ai, Maxim, Arize | Partly. Solves half of one requirement. |
-| AI regulatory and model-risk governance | Bias, drift, model cards, EU AI Act evidence | Credo AI, Holistic AI, IBM watsonx.governance | No. Wrong problem entirely. |
-| Agent builders and vertical agent products | Building new agents in the vendor's own runtime | Sierra, Moveworks, Agentforce, Relevance AI, Lindy, Stack AI, Gumloop | No. Sells a place to rebuild, not a place to catalog. |
+### 1. Internal developer portals
 
-The third category is the most common false positive. A search for "AI governance platform" returns products built for banks and insurers proving model fairness to regulators. Capital Factory's problem is that ten capabilities exist in three copies each. These are unrelated problems solved by unrelated software.
+Port, Backstage, Cortex, OpsLevel, Datadog.
 
-## Category 1: The products that actually match
+Organize applications, owners, deployments, documentation, and operational health. Mature category, well understood, largely aimed at engineering organizations managing services.
 
-### AWS Agent Registry (Amazon Bedrock AgentCore), Preview since April 2026
+Port is the most relevant single product in this entire survey. It now advertises an agentic software development platform with a context lake, an MCP hub, agent management, a skills registry, governance, metrics, and human approvals. That is close to the original Capital Factory mockup, and closer than anything else here to the developer-facing half of what this project describes.
 
-The closest literal match found anywhere. A managed, searchable, private catalog for publishing and discovering agents, MCP servers, tools, and, notably, `agent skills` as a first-class registered resource type. Ships with publisher, curator, consumer, and administrator roles, an approval workflow before a resource becomes discoverable, IAM or JWT authentication, CloudTrail audit logging, and EventBridge notifications on registry events.
+### 2. Agent management platforms
 
-Read that feature list against `requirements.md` and it maps almost line for line onto GOV-001 through GOV-004 and CORE-001 through CORE-004. It is the only product surveyed that treats "skill" as a noun the system understands.
+ServiceNow AI Control Tower, Microsoft Agent 365, IBM watsonx Orchestrate, Kore.ai Agent Management Platform, Airia, Google Gemini Enterprise.
 
-Why it is a watch item rather than a recommendation: it is in Preview, it is AWS-only, and Capital Factory's estate is Google Workspace, GitHub, and Vercel. Adopting it means introducing AWS as new infrastructure solely to host a catalog, and it is an assembly-required primitive rather than a product a non-engineer opens. Preview status also means no pricing signal and no stability commitment.
+Inventory, govern, observe, and sometimes orchestrate AI agents.
 
-Verdict: track it. If Capital Factory ever has an AWS presence for another reason, this becomes the default answer and ADR-009 should reopen.
+- **ServiceNow AI Control Tower** discovers agents, models, MCP servers and other AI assets, then manages ownership, risk, lifecycle, performance and business value. It is the closest thing on the market to a complete enterprise control centre.
+- **Microsoft Agent 365** provides central inventory, ownership, security, observability and lifecycle governance for Microsoft and third-party agents.
+- **IBM watsonx Orchestrate** discovers, catalogs, evaluates, governs and orchestrates agents regardless of where they were built.
+- **Kore.ai AMP** manages agents across LangGraph, CrewAI, AutoGen, Google, AWS, Microsoft and Salesforce, with governance, evaluation, cost and performance monitoring. One of the clearest vendor-neutral implementations of the control-plane idea.
+- **Airia** covers shadow-AI discovery, agent and model cataloging, a model gateway, orchestration, runtime policy, red teaming and compliance.
 
-### Credal AI Agent Registry
+### 3. AI supply chain and identity
 
-Sells exactly the pitch: a governed registry that stops agent sprawl and duplication, with ownership, verified-versus-draft status, named-owner approval chains, role-scoped publish rights, and an audit trail of changes and calls, plus usage and cost dashboards.
+JFrog AI Catalog, Okta for AI Agents, Drata AI Agent Governance.
 
-Why not: no published pricing, enterprise sales motion only, and the reference deployments shown are registries of 128-plus agents. It also wants Capital Factory's capabilities to be Credal agents, not GitHub-resident Claude Code skills. Buying it means re-authoring the estate into a vendor runtime, which is the format trap described below.
+- **JFrog AI Catalog** builds governed registries for models, MCP servers and reusable agent skills, with versioning, security scanning and access control. The strongest match for the shared-capability and registry portion specifically.
+- **Okta for AI Agents** discovers agents, assigns human owners, treats agents as identities, and controls their permissions and lifecycle. Solves the accountability portion, which this project explicitly does not.
+- **Drata** discovers agents, enforces policy, and produces continuous compliance evidence.
 
-Verdict: worth one exploratory call if only to see the product, but the shape and likely five-figure floor do not fit an eight-builder team.
+### The convergence is real and active
 
-### Glean Agent Governance
+Vendors are merging the layers rather than staying in their categories. Port advertises agent management and a skills registry. ServiceNow inventories models, agents and MCP servers alongside traditional assets. The distance between an internal developer portal and an AI control plane is closing quickly.
 
-Real capability, wrong purchase. Glean's agent library and governance module sit on top of Glean's enterprise search platform, and third-party transaction data puts the base platform at a median near $99,000 per year with a floor around $30,000. Buying enterprise search to obtain an agent catalog is backwards for a 25-person firm.
+All claims here are `Reported` from vendor documentation and public material as of September 2026 and require verification before any procurement decision.
 
-## Category 2: Open source, examined honestly
+---
 
-Thirteen platforms were surveyed. None is a skill catalog. They cluster into three shapes.
+## The observation that matters
 
-**Chat interfaces with sharing bolted on.** LibreChat (MIT, roughly 40k stars) is the strongest: multi-user authentication, admin panel with groups and roles, an agent marketplace for sharing internally, and native MCP support. Onyx (MIT core, YC-backed, roughly 32k stars) is the best-connected to Capital Factory's actual stack, with native GitHub and Google Workspace connectors, custom assistants, usage graphs by team and agent, and SSO plus RBAC in its paid Enterprise edition. Open WebUI, AnythingLLM, and Lobe Chat are lighter variants of the same idea. All of them share one limitation: the unit of reuse is an assistant, not a versioned capability with a contract and a release gate. They are catalogs of chatbots, not catalogs of capabilities.
+Read the three categories together and one property is shared by every product in all of them.
 
-**Visual workflow builders.** Dify (roughly 100k stars) has the most credible reuse story in this group, publishing workflows as tools that other apps call, plus a plugin marketplace. Langflow and Flowise are larger and thinner respectively on governance. n8n is mature and widely deployed. Two problems: all are drag-and-drop first, which fits a code-first team badly, and in Dify's and n8n's cases the governance features that matter, RBAC, environments, and Git-backed versioning, sit behind paid Enterprise tiers. n8n's Community edition explicitly restricts workflow access to the instance owner and creator, which is not a permission model.
+**They govern what already exists.**
 
-**Code-first agent frameworks.** Agno (Apache 2.0, roughly 42k stars) is the standout, shipping JWT-based RBAC, multi-tenant isolation, OpenTelemetry tracing, and audit logs inside an open-source runtime. CrewAI and Letta are libraries for building agents rather than catalogs for governing them, and CrewAI's governance lives in its paid Enterprise product. These are things you build on, not things that ingest an existing estate.
+Discover the agents. Inventory them. Assign owners. Monitor cost, performance and drift. Produce evidence. Every one of those actions happens *after* something has been built.
 
-**Not AI-specific but architecturally correct.** Backstage implements exactly the pattern Capital Factory wants: YAML-defined catalog entities, ownership, Git-backed versioning, a discovery interface. It is not AI-aware, and the AI and MCP plugin ecosystem around it was not mature as of August 2026. It remains the reference model for what a catalog is, which is why the thin GitHub-native catalog proposed in the stack document borrows its shape.
+None of these products is in the room at the moment somebody decides to build.
 
-## The finding that decides it: the format trap
+This is not a criticism. Post-hoc governance is a genuine and valuable job, and at enterprise scale it is the harder job. But it means a control tower cannot stop the fourth copy of a capability from being written, because by the time the fourth copy appears in the inventory, the fourth copy exists.
 
-Every platform surveyed, open source and commercial alike, defines capabilities in its own schema. Dify uses its DSL, Flowise and Langflow use JSON graphs, LibreChat and Onyx use their own assistant configs, Agno and CrewAI use Python classes, Credal and Glean use their own agent objects.
+The same argument that rules out an internal catalog for Capital Factory rules out the entire category as a solution to the specific problem this project is trying to solve. That is a useful thing to have discovered, and it is the reason the recommendation survives.
 
-None of them ingests Claude Code's skill format. Adopting any one of them means re-authoring 51 items into a proprietary format that Capital Factory does not control and cannot easily leave.
+---
 
-That is not a migration cost. It is the original problem, recreated. The firm's documented failure mode is capabilities scattered across formats and locations with no canonical source. Answering that by moving everything into a vendor's format, where the exit cost is total, makes the estate less portable, not more. The one exception is Anthropic's own private plugin marketplace, which distributes the format the team already writes, which is exactly why the stack document keeps it as a spike and everything else as prior art.
+## The gap
 
-## MCP as the portability hedge
+**What the market sells:** inventory, governance, observability, compliance and identity. Portfolio-scale, post-hoc, and priced and sized for organizations far larger than this estate.
 
-The interoperability layer nearly every surveyed platform now speaks is MCP. LibreChat, Onyx, Open WebUI, Dify, Langflow, and the AWS Agent Registry all consume MCP servers, as does Claude Code itself. There is now an official MCP registry, a Docker MCP catalog, and published patterns for running a private enterprise registry.
+**What no one sells:** prevention at plan time. Capability descriptions written to be read by a model, reachable from inside the tool a builder already has open, answering "do we already do this?" before a line is written.
 
-The practical consequence for Capital Factory: wrapping the roughly ten duplicated capabilities as internal MCP servers once makes them callable from Claude Code today and from any of these platforms later, without committing to any of them now. That is the cheapest available insurance against the format trap, and it is compatible with every route in ADR-009. It belongs in the ADR-001 evaluation alongside the marketplace spike.
+That gap is small. It is a description standard, a decision rule, and a hook. Because it is small, it does not have to compete with any of the products above, and it does not have to replace them. It can sit on top of whichever one an organization already owns.
 
-## Cost reality
+---
 
-The products with real self-serve pricing solve observability, not cataloging. Vellum publishes tiers from $30 to $200 per month. Galileo publishes a free tier and $100 per month for Pro with RBAC. Orq.ai publishes a pay-as-you-go model with per-seat and per-span pricing, though audit logs and on-premise deployment are enterprise-tier. Langfuse self-hosted is free with unlimited traces, projects, and users, with project-level RBAC and audit logs licensed.
+## What this changes about the recommendation
 
-The products that catalog and govern do not publish pricing at all. Credal, Airia, Glean agents, Moveworks (reported median near $130,000 per year with a floor near $50,000), and ServiceNow's AI Control Tower are all quote-only, enterprise sales motion.
+This survey materially narrows what Capital Factory should build, and the narrowing should be stated plainly rather than absorbed quietly.
 
-So the market offers Capital Factory cheap observability or expensive governance, and nothing that is both, at this scale.
+**Capital Factory should probably not build:** its own agent catalog, its own governance engine, its own identity layer, its own observability stack, or its own generic creation platform. Those exist, they are better funded than anything this engagement would produce, and several of them would be defensible purchases.
 
-## Vendor stability signals worth recording
+**What remains genuinely worth building** is three things, none of which is a platform:
 
-Three data points argue against betting the estate on a single young vendor in this category. Humanloop, still listed as a live option in several 2026 comparison articles, was acqui-hired by Anthropic in August 2025 and sunset the following month. Galileo is subject to a Cisco acquisition announcement. Stack AI was acquired by Asana in May 2026. Category churn at this rate is itself an argument for keeping capabilities in a portable format and treating any platform as a replaceable layer.
+1. Capability descriptions written to be read by a model, and the standard that keeps them good enough to match against.
+2. The rule that decides what gets shared and what stays independent, with its four criteria.
+3. The plan-time hook that puts the first in front of Claude using the second.
 
-## What this means for ADR-009
+Everything underneath those three is a scheduled job, a standard protocol, and things Capital Factory already runs. See `technical-stack.md`.
 
-The survey strengthens the recommended posture rather than changing it, and it sharpens two of its clauses.
+**The tension worth naming.** A serious reading of this market says buy the inventory layer rather than build it. That reading is probably right, and it is compatible with this recommendation: the store underneath the model may well be someone else's product. What does not exist for purchase, at any price, is the layer that answers the question during planning. The design keeps those two concerns separate specifically so that the first can be replaced without disturbing the second.
 
-The posture stands: assemble commodity layers, build the thin Capital Factory-specific layer, keep capabilities in a format the firm controls. Nothing found solves the catalog and reuse problem at this scale without imposing a proprietary format.
+---
 
-Two amendments follow. First, add internal MCP packaging to the ADR-001 evaluation as the portability hedge described above. Second, add the AWS Agent Registry to a formal watch list with a named reopening condition: if Capital Factory adopts AWS for any other reason, or if the registry exits Preview with pricing and non-AWS ingestion, the buy decision should be reconsidered on its merits.
+## Who comes closest, and what each would leave undone
 
-What would have changed the recommendation, recorded so the reasoning is falsifiable: a product that ingests existing Claude Code skills without re-authoring, published pricing under roughly $500 per month, real per-capability permissions and audit, and a credible exit path. No product surveyed meets all four. Three meet none.
+| Product | What it nails | What it would leave undone here |
+| --- | --- | --- |
+| ServiceNow AI Control Tower | Enterprise-wide governance and portfolio management | Enterprise cost and implementation weight, for an estate of 51 items and eight builders |
+| Port | Developer UX, application catalog, skills registry, MCP hub, approvals | Does not replace agent identity, and is a destination people must visit |
+| Kore.ai AMP, IBM watsonx Orchestrate | Vendor-neutral agent management across frameworks | Governs agents after they exist; no plan-time hook |
+| Airia | Discovery through runtime governance in one AI-specific platform | Same post-hoc shape, plus a new platform boundary around sensitive data |
+| JFrog AI Catalog | Governed registries for skills and MCP servers, with versioning and scanning | No portfolio view, no plan-time reuse |
+| Okta for AI Agents | Agent identity, ownership and permissions | A different problem, and one this project explicitly does not take on |
 
-## Products surveyed
+No option should be assumed to satisfy every requirement, and none should be dismissed without a real evaluation against a real estate.
 
-Agent registry and control plane: Credal AI, Glean Agents, AWS Bedrock AgentCore Agent Registry, Airia, ServiceNow AI Agent Orchestrator and AI Control Tower.
-Observability and evaluation: Langfuse, Vellum, Galileo, Orq.ai, Maxim AI, Arize Phoenix, Aporia, Humanloop (defunct).
-Regulatory and model-risk governance: Credo AI, Holistic AI, IBM watsonx.governance.
-Open-source platforms and frameworks: Dify, Flowise, Langflow, LibreChat, Open WebUI, Agno, CrewAI, Letta, AnythingLLM, Lobe Chat, Onyx, Rivet, n8n, Backstage.
-Agent builders and vertical products: Writer, Sierra, Salesforce Agentforce, Moveworks, Stack AI, Relevance AI, Lindy, Gumloop.
+---
 
-## Method and limitations
+## The recommended evaluation, if one is run
 
-Desk research conducted August 20, 2026 across vendor documentation, published pricing pages, GitHub repositories, and third-party comparisons. No product was installed, trialed, or demonstrated. Pricing for quote-only products is inferred from third-party transaction data and should be treated as indicative only. Feature claims are as published by vendors and are not independently verified. This document should be refreshed before any procurement decision, and its conclusions revisited if the estate grows substantially or headcount changes the per-seat arithmetic.
+The earlier version of this document proposed testing internal developer portals. That was too narrow. Two distinct routes should be compared:
+
+- **Developer portal route:** Port, as the strongest single candidate.
+- **AI control-plane route:** ServiceNow, Kore.ai, IBM or Airia.
+
+The comparison would answer whether Capital Factory primarily needs a better software operating model, a genuine agent-management platform, or neither at this size. In all three outcomes the plan-time layer is still missing and still has to be built.
+
+---
+
+## Falsifiable criteria
+
+The recommendation changes if any product clears all four. Written down so it can be checked rather than trusted.
+
+1. It reads Capital Factory's existing capability format without a rewrite.
+2. It can be queried during planning, from inside the tool the builder is already using, without a person visiting anything.
+3. It returns enough to act on, not just a record: contract, invocation, and a usage example.
+4. It is affordable and operable by an organization with eight builders and no platform team.
+
+Criterion 2 is the one nothing currently clears. If a product ever clears all four, adopt it, port the content, and spend the time on evaluations and the decision rule instead, which are the parts nobody else will write.
+
+---
+
+## Vendor stability
+
+Two notes for anyone weighing a purchase.
+
+This category has already seen consolidation, and products in it have been acquired and sunset. Any product selected should be evaluated on whether its data can be exported in a form that survives the vendor.
+
+That is also the argument for keeping the capability descriptions in a portable format and treating every layer beneath them as replaceable. The content is the asset. The store is not.
