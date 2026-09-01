@@ -1,8 +1,35 @@
 # Proposed Technical Stack
 
 Status: Candidate analysis - component selections are not final; the overall posture is proposed for confirmation as ADR-009
-Last updated: August 20, 2026
-Change note: Restructured around a single recommended posture. An earlier draft presented an end-to-end agent platform as a co-equal route; this draft explains up front why that route is not proposed, and retains the platform survey as evidence that it was considered rather than overlooked. Vendor capability claims are Reported from vendor documentation and industry comparisons as of August 2026 and require verification during discovery.
+Last updated: August 29, 2026
+
+## Amendment, August 29: the stack under an intelligence-layer architecture
+
+The assemble-and-build-thin posture argued below survives the move to an understanding layer, and is in fact strengthened by it. Five notes on what the architecture changes.
+
+**The build list is now specific.** What Capital Factory builds is: the organizational model and its generator, the model-readable capability descriptions, the four-criterion extraction test, the weekly loop, the MCP server, and evaluation suites wired into MERGE-GATE as release gates. Everything else is bought, adopted, or left alone.
+
+**MCP is the interface and it is deliberately not ours to invent.** The server is ours to run; the protocol is not. That is the whole point. Claude Code already speaks it, so no client work is needed and no new destination gets built. If a first-party capability registry ships with a plan-time hook, the content ports and only the server is discarded.
+
+**Deliberately not chosen: a multi-connector ingestion pipeline.** Connectors, raw event storage, normalization, and enrichment across GitHub, Vercel, MCPs, APIs, and documents is a real architecture and the wrong first move here. The estate is fifty-one Claude Code skills in five repositories, forty of them well documented. That is already structured. Reading it beats streaming it, and cross-repository understanding is the single most likely capability to be commoditized within two model releases. Connectors get added one at a time, each justified by a named question the repositories cannot answer. Deployment reality is the likely first exception.
+
+**Storage is a smaller question than it looks.** The model is typed and relational, which is graph-shaped, but a graph database is an implementation choice and not an architectural commitment. Start with the cheapest store that answers the queries in `system-design.md`, and treat the type system and the content as the durable parts.
+
+**Semantic search is the one genuinely new component.** `capability_search` matches on described behaviour rather than names, which means embeddings, a model call, or both, plus a confidence threshold below which a match is suppressed. A wrong match costs more than no match, because it produces misplaced confidence at exactly the moment someone is deciding whether to build.
+
+## Post-session amendments, August 26, 2026
+
+Four amendments recorded when the session findings first landed, retained here for the decision trail.
+
+**1. Identity and secrets are no longer this engagement's to select.** The sponsor assigned identity, SSO, and systems administration to an incoming IT and security consultant. ADR-004 stays on the register because the system still consumes an identity model, but it is now a decision this work receives rather than makes. The correct design response is to depend on as little of it as possible, so that whichever model arrives does not force a rebuild.
+
+**2. The gateway question gained weight.** Per-function model selection is now a named product capability, not a nice-to-have. The sponsor's own framing: "Analysis A, the best model might not be the frontier model. Actually the best model is a Sonnet because it's very fast, very cheap, and easily good enough. Whereas some of the others need the frontier model." A capability with five analysis functions routed to five different models needs per-function attribution to prove the saving, and that is what a gateway buys. It remains conditional on a verified control need, but the need is now more likely than the pre-call draft assumed.
+
+**3. Inference routing is a named systems risk.** Claude Code inference has not been a cost problem for this team. Chat-style and headless interfaces push work toward the API, where the same volume gets expensive quickly. A future in which Claude Code inference cannot be wrapped by internal tooling is a real design risk, and the weekly-cadence design in `system-design.md` is partly a hedge against it. Continuously running proactive agents are not viable on subscription inference at this scale; the sponsor accepted the periodic framing.
+
+**4. The build list is shorter.** Person-config separation and the person-to-keys-to-runtimes revocation map are out. The first is demoted from an organizing idea to a per-capability property, because the builder-facing product it belonged to was the wrong design. The second belongs to the IT and security engagement. See the August 29 amendment above for the current build list, which supersedes this note.
+
+Original change note: Restructured around a single recommended posture. An earlier draft presented an end-to-end agent platform as a co-equal route; this draft explains up front why that route is not proposed, and retains the platform survey as evidence that it was considered rather than overlooked. Vendor capability claims are Reported from vendor documentation and industry comparisons as of August 2026 and require verification during discovery.
 
 ## The posture, and why
 
@@ -18,7 +45,7 @@ This document proposes one route: keep GitHub and Vercel as the estate, adopt be
 
 **Scratch-building the commodity layers fails the same test from the other side.** A hand-rolled gateway, trace store, or job queue is a 52nd internal application that itself needs an owner after Day 90. The mandate explicitly requires a maintainable system after the engagement; in 2026 these layers are commodity open source or inexpensive managed services, and building them recreates undifferentiated plumbing at the cost of the differentiated work.
 
-What remains genuinely Capital Factory's to build is short and portable across every vendor decision below: the skill contract format and generated catalog, the eval suites wired into MERGE-GATE as release gates, the safe-database-writes guardrail and its universal adoption, the autonomy ladder as measured policy, person-config separation so skills are shared and people are not, and the person-to-keys-to-runtimes dependency map behind the revocation preview. That list is the engineering scope of the 90 days.
+What remains genuinely Capital Factory's to build is short and portable across every vendor decision below. That list has been revised; see amendment 4 above, which supersedes the pre-call version of this sentence. It is now: the capability registry and its model-readable descriptions, the four-criterion extraction test, the weekly sweep, the plan-time discovery query, eval suites wired into MERGE-GATE as release gates, and the safe-database-writes guardrail with universal adoption.
 
 Conditions that would reopen this posture, to be recorded in ADR-009: a decision to leave Claude Code as the authoring environment; headcount growth that makes per-seat platform pricing cheaper than operator maintenance; or a security mandate requiring a vendor-managed boundary rather than a self-managed one.
 
@@ -36,7 +63,7 @@ Component choices within this posture should be evaluated against:
 
 ## Platforms considered and set aside
 
-Recorded so the decision is documented as made, not missed. All claims Reported, August 2026.
+Recorded so the decision is documented as made, not missed. All claims Reported, August 2026. A fuller survey of open-source and commercial platforms, including the agent-registry category that most closely matches this need, is in [prior-art.md](prior-art.md); the summary below is the short form.
 
 | Platform | What it offers | Why it is not proposed |
 | --- | --- | --- |
@@ -140,6 +167,12 @@ The difference is not the dollars; it is who maintains the plumbing after the en
 - ADR-007: Evaluation platform and release gates.
 - ADR-008: Repository topology and ownership.
 - ADR-009: Platform posture - the assemble-and-build-thin route this document proposes, recorded with the rejected end-to-end platforms, the rejected scratch-build, and the reopening conditions stated above.
+- ADR-010: Core extraction versus drift audit - resolved in `architecture-decision.md` as a rule rather than a side: extract when a change must propagate, audit when it must not. Recorded with the four-criterion extraction test and the four conditions that would reverse it.
+- ADR-011: Per-function model routing - whether routing goes through a gateway from the start or is deferred until the first multi-function capability exists in the core.
+- ADR-012: Inference source - whether the estate's scheduled work runs on subscription inference, API inference, or a mix, and what happens to the weekly loop if that changes.
+- ADR-013: Population method - reading the repositories directly versus a multi-connector ingestion pipeline. Resolved in `architecture-decision.md` as read-through first, with connectors added one at a time against named questions.
+- ADR-014: Interface - MCP as the delivery mechanism for the understanding layer, and the metadata-only boundary that keeps it out of the identity dependency.
+- ADR-015: Model storage and semantic matching - where the organizational model lives, and whether capability search uses embeddings, a model call, or both.
 
 ## Required evidence before final selection
 

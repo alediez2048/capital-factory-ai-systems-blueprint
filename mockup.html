@@ -15,6 +15,7 @@
     --warn-bg:#fbf1d8; --warn-ink:#7d5900;
     --bad-bg:#f9e8e7; --bad-ink:#b3261e;
     --neut-bg:#edebe1; --neut-ink:#5f5b51;
+    --code-bg:#f7f6f0;
     --shadow:0 1px 2px rgba(26,25,23,.05);
   }
   html[data-theme="dark"]{
@@ -25,6 +26,7 @@
     --warn-bg:rgba(242,169,0,.14); --warn-ink:#f2b52e;
     --bad-bg:rgba(229,72,77,.15); --bad-ink:#f29295;
     --neut-bg:rgba(248,247,241,.08); --neut-ink:#c8c3b8;
+    --code-bg:#151519;
     --shadow:none;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -36,9 +38,6 @@
   .topbar .container{display:flex;align-items:center;gap:20px;height:56px}
   .wordmark{font:600 14px/1 Inter,sans-serif;letter-spacing:.06em;white-space:nowrap}
   .wordmark span{color:var(--gold-ink);font-weight:500;letter-spacing:.16em;margin-left:8px;font-size:11px;text-transform:uppercase}
-  .gsearch{flex:0 1 260px;background:var(--bg);border:1px solid var(--border);border-radius:6px;
-    color:var(--ink);font:400 13px/1 Inter,sans-serif;padding:8px 12px;outline:none}
-  .gsearch::placeholder{color:var(--subtle)}
   .topnav{display:flex;gap:4px;margin-left:auto}
   .topnav button{background:none;border:0;border-radius:6px;color:var(--muted);font:500 13px/1 Inter,sans-serif;
     padding:9px 12px;cursor:pointer;white-space:nowrap}
@@ -52,20 +51,22 @@
   .page{padding:24px 0 72px}
   .page-h{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:8px 0 20px;flex-wrap:wrap}
   .page-h h1{font:500 26px/1.2 Fraunces,Georgia,serif;letter-spacing:-.01em}
-  .page-h p{color:var(--muted);font-size:14px;flex-basis:100%}
+  .page-h p{color:var(--muted);font-size:14px;flex-basis:100%;max-width:760px}
   .screen{display:none}
   .screen.active{display:block}
 
   .card{background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
   .card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
   .card-h h3{font:500 16px/1.3 Fraunces,Georgia,serif}
-  .card-h .sub{color:var(--subtle);font-size:12px}
+  .card-h .sub{color:var(--subtle);font-size:12px;text-align:right}
   .card-b{padding:8px 20px 14px}
   .card-b.pad{padding:16px 20px}
 
   .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
   .grid2 > div{min-width:0}
-  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+  .gridhalf{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .gridhalf > div{min-width:0}
+  @media(max-width:900px){.grid2,.gridhalf{grid-template-columns:1fr}}
 
   .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
   .statcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;box-shadow:var(--shadow)}
@@ -73,6 +74,7 @@
   .statcard small{display:block;color:var(--subtle);font-size:12px;margin-top:4px}
   .statcard .d{font-size:12px;margin-top:6px;color:var(--gold-ink);font-weight:500}
   .statcard .d.bad{color:var(--bad-ink)}
+  .statcard .d.ok{color:var(--ok-ink)}
 
   /* ---------- pills, avatars, buttons ---------- */
   .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;
@@ -80,25 +82,23 @@
   .pill.ok{background:var(--ok-bg);color:var(--ok-ink)}
   .pill.warn{background:var(--warn-bg);color:var(--warn-ink)}
   .pill.bad{background:var(--bad-bg);color:var(--bad-ink)}
-  .pill .ic{font-size:10px}
   .avatar{flex:0 0 34px;width:34px;height:34px;border-radius:7px;background:var(--neut-bg);
     display:grid;place-items:center;font:600 12px/1 Inter,sans-serif;color:var(--muted)}
-  .avatar.round{border-radius:50%}
   .btn{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#1a1917;border:0;border-radius:999px;
     font:600 13px/1 Inter,sans-serif;padding:9px 16px;cursor:pointer}
   .btn:hover{filter:brightness(1.05)}
   .btn.sec{background:none;color:var(--gold-ink);border:1px solid var(--gold-ink);font-weight:500}
+  .btn.sm{padding:6px 13px;font-size:12px}
 
   /* ---------- list rows ---------- */
   .lrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border)}
   .lrow:first-child{border-top:0}
   .lrow .tx{flex:1;min-width:0}
   .lrow .tx h4{font:500 14px/20px Inter,sans-serif}
-  .lrow .tx h4 .mono{font-family:ui-monospace,Menlo,monospace;font-size:13px}
   .lrow .tx p{color:var(--muted);font-size:13px;margin-top:2px}
   .lrow .end{margin-left:auto;display:flex;gap:6px;align-items:center;flex-shrink:0}
 
-  /* ---------- catalog table ---------- */
+  /* ---------- tables ---------- */
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
   .search{flex:1 1 220px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--ink);
     font:400 13px/1 Inter,sans-serif;padding:9px 12px;outline:none}
@@ -107,11 +107,10 @@
     font:500 12px/1 Inter,sans-serif;padding:8px 14px;cursor:pointer}
   .chip:hover{color:var(--ink)}
   .chip.active{background:var(--ink);border-color:var(--ink);color:var(--card)}
-  .thead{display:grid;grid-template-columns:minmax(240px,2fr) 90px 130px 1.2fr 170px;gap:12px;
-    padding:10px 20px;border-bottom:1px solid var(--border);
+  .thead,.trow{display:grid;grid-template-columns:minmax(230px,2fr) 110px 1.1fr 150px;gap:12px}
+  .thead{padding:10px 20px;border-bottom:1px solid var(--border);
     font:500 11px/16px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle)}
-  .trow{display:grid;grid-template-columns:minmax(240px,2fr) 90px 130px 1.2fr 170px;gap:12px;
-    align-items:center;padding:11px 20px;border-bottom:1px solid var(--border);font-size:13px}
+  .trow{align-items:center;padding:11px 20px;border-bottom:1px solid var(--border);font-size:13px}
   .trow:last-child{border-bottom:0}
   .trow:hover{background:var(--hover)}
   .trow.link{cursor:pointer}
@@ -128,56 +127,73 @@
     .trow .c{display:none}
   }
 
-  /* ---------- key/value, bars, traces ---------- */
-  .kv{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;font-size:13px;padding:4px 0}
+  /* ---------- key/value, bars ---------- */
+  .kv{display:grid;grid-template-columns:170px 1fr;gap:8px 16px;font-size:13px;padding:4px 0}
   .kv dt{color:var(--subtle)}
   .kv dd{color:var(--muted)}
-  .bar-row{display:grid;grid-template-columns:150px 1fr 64px;gap:12px;align-items:center;padding:7px 0;font-size:13px}
+  .bar-row{display:grid;grid-template-columns:170px 1fr 74px;gap:12px;align-items:center;padding:7px 0;font-size:13px}
   .bar-row span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bar-row .b{height:8px;background:var(--neut-bg);border-radius:4px;position:relative;overflow:hidden}
   .bar-row .b i{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:4px}
+  .bar-row .b i.bad{background:var(--bad-ink)}
   .bar-row em{font-style:normal;text-align:right;color:var(--ink);font-weight:500;font-size:13px}
-  .prog{height:8px;background:var(--neut-bg);border-radius:4px;position:relative;overflow:hidden;min-width:80px}
-  .prog i{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:4px}
-  .prog.hot i{background:var(--bad-ink)}
-  .t-row{display:grid;grid-template-columns:1fr 70px 70px 60px;gap:10px;align-items:baseline;
-    padding:9px 0;border-top:1px solid var(--border);font-size:13px}
-  .t-row:first-child{border-top:0}
-  .t-row .n{font-weight:500}
-  .t-row .n small{color:var(--subtle);font-weight:400;margin-left:6px}
-  .t-row .m{color:var(--muted);text-align:right;font-size:12.5px}
-  .t-row.lv1 .n{padding-left:20px}
-  .t-row.lv2 .n{padding-left:40px}
   .mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
   .note{color:var(--subtle);font-size:12px;line-height:1.55;padding:10px 0 2px}
+  .backlink{background:none;border:0;color:var(--subtle);font:500 13px/1 Inter,sans-serif;cursor:pointer;padding:0;margin-bottom:14px}
+  .backlink:hover{color:var(--gold-ink)}
 
-  .steps{counter-reset:s}
-  .stepcard{position:relative}
-  .stepcard .card-h::before{counter-increment:s;content:counter(s);flex:0 0 26px;height:26px;border-radius:50%;
-    background:var(--neut-bg);color:var(--muted);display:grid;place-items:center;font:600 13px/1 Inter,sans-serif}
-  textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--ink);
-    padding:12px 14px;font:400 14px/1.6 Inter,sans-serif;min-height:70px;outline:none}
-  .radio-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  /* ---------- new: machine view ---------- */
+  pre.code{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:14px 16px;overflow-x:auto;
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;color:var(--muted)}
+  pre.code b{color:var(--ink);font-weight:500}
+  pre.code i{color:var(--gold-ink);font-style:normal}
+
+  /* ---------- new: criteria ---------- */
+  .crit{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:8px 0;font-size:13px;
+    border-top:1px solid var(--border)}
+  .crit:first-child{border-top:0}
+  .crit .m{font-weight:600;font-size:13px;line-height:20px;text-align:center}
+  .crit.pass .m{color:var(--ok-ink)}
+  .crit.fail .m{color:var(--bad-ink)}
+  .crit b{display:block;font-weight:500;color:var(--ink)}
+  .crit p{color:var(--muted);margin-top:1px}
+
+  /* ---------- new: proposal card ---------- */
+  .prop{border-top:1px solid var(--border);padding:16px 20px}
+  .prop:first-child{border-top:0}
+  .prop-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .prop-h h4{font:500 15px/1.3 Inter,sans-serif}
+  .prop-h .rk{flex:0 0 24px;height:24px;border-radius:6px;background:var(--neut-bg);color:var(--muted);
+    display:grid;place-items:center;font:600 12px/1 Inter,sans-serif}
+  .prop p.why{color:var(--muted);font-size:13px;margin-bottom:10px;max-width:740px}
+  .prop .acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+  /* ---------- new: two-column flow ---------- */
+  .flow{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)}
+  .flow > div{padding:16px 20px}
+  .flow > div:first-child{border-right:1px solid var(--border)}
+  .flow h5{font:500 11px/16px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle);margin-bottom:10px}
+  @media(max-width:900px){.flow{grid-template-columns:1fr}.flow > div:first-child{border-right:0;border-bottom:1px solid var(--border)}}
+
+  .msg{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.6}
+  .msg .who{font:500 11px/16px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);margin-bottom:5px}
+  .msg.hl{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 
   footer{border-top:1px solid var(--border);padding:24px 0 40px;color:var(--subtle);font-size:12px;line-height:1.6}
   footer .container{max-width:1128px}
-  .backlink{background:none;border:0;color:var(--subtle);font:500 13px/1 Inter,sans-serif;cursor:pointer;padding:0;margin-bottom:14px}
-  .backlink:hover{color:var(--gold-ink)}
+  .banner{background:var(--warn-bg);color:var(--warn-ink);border-radius:8px;padding:12px 16px;font-size:13px;
+    line-height:1.55;margin-bottom:20px}
 </style>
 </head>
 <body>
 
 <div class="topbar"><div class="container">
-  <div class="wordmark">CAPITAL FACTORY<span>Core</span></div>
-  <input class="gsearch" placeholder="Search Core" onfocus="go('catalog');document.getElementById('q').focus();this.blur()">
+  <div class="wordmark">CAPITAL FACTORY<span>Core · operator console</span></div>
   <nav class="topnav">
-    <button data-nav="overview" class="active">Home</button>
-    <button data-nav="catalog">Catalog</button>
-    <button data-nav="intake">New</button>
-    <button data-nav="runs">Runs</button>
-    <button data-nav="usage">Usage</button>
-    <button data-nav="access">Access</button>
-    <button data-nav="systems">Systems</button>
+    <button data-nav="console" class="active">Console</button>
+    <button data-nav="proposals">Proposals</button>
+    <button data-nav="registry">Registry</button>
+    <button data-nav="plantime">Plan time</button>
     <button data-nav="decisions">Decisions</button>
   </nav>
   <button class="theme-btn" id="themeBtn">Dark mode</button>
@@ -185,493 +201,497 @@
 
 <div class="page"><div class="container">
 
-<!-- ============ OVERVIEW ============ -->
-<section class="screen active" id="overview">
+<!-- ============ CONSOLE ============ -->
+<section class="screen active" id="console">
   <div class="page-h">
-    <h1>Good afternoon. The estate at a glance.</h1>
-    <p>51 packaged items across five repositories, moving under one roof: owned, versioned, evaluated, observable.</p>
+    <h1>Console</h1>
+    <p>One user: whoever owns the platform. The eight people building applications never open this, and never learn the core exists. That is the design, not an oversight.</p>
+  </div>
+
+  <div class="banner">
+    The sweep ran Monday at 06:00. It read 5 repositories and 51 packaged items, changed nothing, and produced 7 proposals. Nothing in this console can modify an application without a human approving it.
   </div>
 
   <div class="statgrid">
-    <div class="statcard"><b>31</b><small>Applications</small><span class="d">6 on managed infra</span></div>
-    <div class="statcard"><b>16</b><small>Shared skills</small><span class="d">2 extracted to core</span></div>
-    <div class="statcard"><b>10</b><small>Duplicated capabilities</small><span class="d bad">2 drifted</span></div>
-    <div class="statcard"><b>12/51</b><small>With eval suites</small><span class="d">was 1 at baseline</span></div>
-    <div class="statcard"><b>48</b><small>Business systems</small><span class="d bad">8 without an owner</span></div>
+    <div class="statcard"><b>7</b><small>Open proposals</small><div class="d">3 new this week</div></div>
+    <div class="statcard"><b>9</b><small>Capabilities built more than once</small><div class="d ok">down from 10</div></div>
+    <div class="statcard"><b>2</b><small>Copies that have diverged</small><div class="d bad">1 is compliance-bearing</div></div>
+    <div class="statcard"><b>1 / 51</b><small>Items with an evaluation</small><div class="d bad">caps extraction rate</div></div>
+    <div class="statcard"><b>3</b><small>Capabilities in the core</small><div class="d">11 consumers</div></div>
   </div>
 
   <div class="grid2">
     <div>
       <div class="card">
-        <div class="card-h"><h3>Needs attention</h3><span class="sub">4 open</span></div>
+        <div class="card-h"><h3>This week's queue</h3><span class="sub">ranked by expected value</span></div>
         <div class="card-b">
-          <div class="lrow"><div class="avatar">LP</div>
-            <div class="tx"><h4>new-lp-onboarding writes the investor CRM unprotected</h4>
-            <p>Every other CRM writer uses safe-database-writes. This one never adopted it.</p></div>
-            <div class="end"><span class="pill bad">P0</span><button class="btn sec">Open ticket</button></div></div>
-          <div class="lrow"><div class="avatar">AL</div>
-            <div class="tx"><h4>AngelList compliance guardrail has diverged</h4>
-            <p>Copies in all-access-skills and texas-fund-skills no longer match.</p></div>
-            <div class="end"><span class="pill bad">P0</span></div></div>
-          <div class="lrow"><div class="avatar">SY</div>
-            <div class="tx"><h4>8 systems have no long-term owner</h4>
-            <p>24 transfers to Kyle designated; 4 complete. Assign owners this sprint.</p></div>
-            <div class="end"><span class="pill">IAM</span></div></div>
-          <div class="lrow"><div class="avatar">MS</div>
-            <div class="tx"><h4>Extraction candidate: meeting-scheduler</h4>
-            <p>Near-identical copies for Jamie, Drew, and Caroline. Evidence filed, awaiting review.</p></div>
-            <div class="end"><span class="pill warn">Proposed</span></div></div>
+          <div class="lrow">
+            <div class="avatar">1</div>
+            <div class="tx"><h4>Extract <span class="mono">safe-crm-write</span></h4>
+              <p>4 applications write the investor database. 3 go through the guardrail. 1 does not.</p></div>
+            <div class="end"><span class="pill bad">extract</span></div>
+          </div>
+          <div class="lrow">
+            <div class="avatar">2</div>
+            <div class="tx"><h4>Extract <span class="mono">startup-ingest</span></h4>
+              <p>Requested by 3 separate PRDs in the last month. Built twice, about to be built a third time.</p></div>
+            <div class="end"><span class="pill bad">extract</span></div>
+          </div>
+          <div class="lrow">
+            <div class="avatar">3</div>
+            <div class="tx"><h4>Patch <span class="mono">angellist-compliance</span> in place</h4>
+              <p>Two copies, hand-mirrored, already diverged. Fails criterion 3: they are no longer the same thing.</p></div>
+            <div class="end"><span class="pill warn">patch</span></div>
+          </div>
+          <div class="lrow">
+            <div class="avatar">4</div>
+            <div class="tx"><h4>Leave <span class="mono">draft-like-*</span> alone</h4>
+              <p>Six per-person copies. Fails criterion 1: Drew does not want Jamie's improvements to reach him.</p></div>
+            <div class="end"><span class="pill">leave</span></div>
+          </div>
+          <div class="lrow">
+            <div class="avatar">5</div>
+            <div class="tx"><h4>Extract <span class="mono">meeting-schedule</span></h4>
+              <p>Three near-identical implementations. Blocked: no evaluation exists for any of them.</p></div>
+            <div class="end"><span class="pill warn">blocked</span></div>
+          </div>
+          <div class="note">Two lower-ranked proposals not shown. Every recommendation carries its reasoning, criterion by criterion, so it can be argued with.</div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h3>This week in the core</h3></div>
-        <div class="card-b">
-          <div class="lrow"><div class="avatar">VD</div>
-            <div class="tx"><h4>voice-drafting v2.1.0 released</h4>
-            <p>Change monitor re-ran 3 consumer eval suites. All passing. Owners notified.</p></div>
-            <div class="end"><span class="pill ok">Pass</span></div></div>
-          <div class="lrow"><div class="avatar">VA</div>
-            <div class="tx"><h4>va-school moved to managed infrastructure</h4>
-            <p>First workload off an employee laptop. Rollback tested on day one.</p></div>
-            <div class="end"><span class="pill warn">Milestone</span></div></div>
-          <div class="lrow"><div class="avatar">MU</div>
-            <div class="tx"><h4>Model updater: 4 skills recommended for upgrade</h4>
-            <p>New Claude release cleared evals on 4 of 16 skills at lower cost.</p></div>
-            <div class="end"><span class="pill">Review</span></div></div>
+        <div class="card-h"><h3>Duplication over time</h3><span class="sub">capabilities built more than once</span></div>
+        <div class="card-b pad">
+          <div class="bar-row"><span>Week 1 (baseline)</span><div class="b"><i style="width:100%"></i></div><em>10</em></div>
+          <div class="bar-row"><span>Week 4</span><div class="b"><i style="width:100%"></i></div><em>10</em></div>
+          <div class="bar-row"><span>Week 8 (registry live)</span><div class="b"><i style="width:100%"></i></div><em>10</em></div>
+          <div class="bar-row"><span>Week 10 (plan-time query on)</span><div class="b"><i style="width:100%"></i></div><em>10</em></div>
+          <div class="bar-row"><span>Week 12</span><div class="b"><i style="width:90%"></i></div><em>9</em></div>
+          <div class="note">The line only bends after the plan-time query ships. The sweep measures duplication; it does not prevent it. Illustrative data.</div>
         </div>
       </div>
     </div>
 
     <div>
       <div class="card">
-        <div class="card-h"><h3>AI spend</h3><span class="sub">30 days</span></div>
+        <div class="card-h"><h3>Coverage gaps</h3></div>
         <div class="card-b">
-          <div class="bar-row"><span>va-school</span><div class="b"><i style="width:78%"></i></div><em>$412</em></div>
-          <div class="bar-row"><span>desk-drive</span><div class="b"><i style="width:54%"></i></div><em>$286</em></div>
-          <div class="bar-row"><span>spv-campaign-responder</span><div class="b"><i style="width:31%"></i></div><em>$164</em></div>
-          <div class="bar-row"><span>inbox sweeps (all)</span><div class="b"><i style="width:22%"></i></div><em>$118</em></div>
-          <div class="bar-row"><span>everything else</span><div class="b"><i style="width:16%"></i></div><em>$87</em></div>
-          <p class="note">Total $1,067 · every call attributed to an app, environment, and key.</p>
+          <div class="lrow"><div class="tx"><h4>50 of 51 items have no evaluation</h4>
+            <p>The binding constraint on how fast the core can grow.</p></div></div>
+          <div class="lrow"><div class="tx"><h4>4 items have no named owner</h4>
+            <p>Cannot be extracted; nobody can approve the contract.</p></div></div>
+          <div class="lrow"><div class="tx"><h4>2 items run on an employee laptop</h4>
+            <p><span class="mono">desk-drive</span>, <span class="mono">inbox-sweep</span>. Recorded for the IT handoff.</p></div></div>
+          <div class="lrow"><div class="tx"><h4>6 registry descriptions rated weak</h4>
+            <p>A vague description is a false negative at plan time, which is how a duplicate gets built.</p></div></div>
         </div>
       </div>
+
       <div class="card">
-        <div class="card-b pad" style="text-align:center">
-          <p style="font:400 17px/1.4 Fraunces,Georgia,serif">Building something?</p>
-          <p style="color:var(--muted);font-size:13px;margin:6px 0 12px">The catalog gets checked first, so nothing gets built twice.</p>
-          <button class="btn" onclick="go('intake')">Start something new</button>
+        <div class="card-h"><h3>Last week's proposals</h3><span class="sub">did anything happen</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>Approved</h4><p>2 of 5</p></div><div class="end"><span class="pill ok">acted</span></div></div>
+          <div class="lrow"><div class="tx"><h4>Deferred</h4><p>2 of 5, both blocked on evaluations</p></div><div class="end"><span class="pill warn">waiting</span></div></div>
+          <div class="lrow"><div class="tx"><h4>Untouched</h4><p>1 of 5, 12 days old</p></div><div class="end"><span class="pill bad">stale</span></div></div>
+          <div class="note">A queue nobody acts on is the known failure mode of the audit-only model. It is measured here rather than assumed away.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h3>Where cheaper is good enough</h3></div>
+        <div class="card-b pad">
+          <div class="bar-row"><span>startup-ingest / parse</span><div class="b"><i style="width:22%"></i></div><em>Sonnet</em></div>
+          <div class="bar-row"><span>startup-ingest / enrich</span><div class="b"><i style="width:30%"></i></div><em>Sonnet</em></div>
+          <div class="bar-row"><span>startup-ingest / judge</span><div class="b"><i class="bad" style="width:92%"></i></div><em>frontier</em></div>
+          <div class="bar-row"><span>startup-ingest / rank</span><div class="b"><i style="width:34%"></i></div><em>Sonnet</em></div>
+          <div class="note">Only possible once the five functions live in one place. In three copies this optimization has to be found and executed three times, which means it never happens.</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ CATALOG ============ -->
-<section class="screen" id="catalog">
+<!-- ============ PROPOSALS ============ -->
+<section class="screen" id="proposals">
   <div class="page-h">
-    <h1>Catalog</h1>
-    <p>Apps own a job end to end. Skills are judgment many apps share. Tools are deterministic code. If three apps would want it, it belongs in the core.</p>
+    <h1>Proposals</h1>
+    <p>The weekly sweep is both the extraction mechanism and the drift auditor. It is one read-only component with three possible answers: extract into the core, patch in place across the copies, or leave it alone and keep watching. Most findings should land on the last two.</p>
   </div>
 
   <div class="card">
     <div class="toolbar">
-      <input class="search" id="q" placeholder="Search the estate — try &ldquo;inbox&rdquo; or &ldquo;drafting&rdquo;">
-      <button class="chip active" data-f="all">All</button>
-      <button class="chip" data-f="app">Apps</button>
-      <button class="chip" data-f="skill">Skills</button>
-      <button class="chip" data-f="tool">Tools</button>
+      <input class="search" placeholder="Filter proposals">
+      <button class="chip active">All 7</button>
+      <button class="chip">Extract 2</button>
+      <button class="chip">Patch 3</button>
+      <button class="chip">Leave 2</button>
     </div>
-    <div class="thead"><span>Name</span><span>Type</span><span>Owner</span><span>Runtime · Evals</span><span class="r">State</span></div>
-    <div id="catrows">
-      <div class="trow" data-t="app" data-s="va-school venture associate">
-        <div class="ent"><div class="avatar">VA</div><div><span class="nm">va-school</span><small>Trains venture associates end to end</small></div></div>
-        <span class="c">App</span><span class="c">Kyle</span><span class="c">Managed · 24 evals passing</span>
-        <div class="st"><span class="pill warn">Beta</span></div></div>
-      <div class="trow link" data-t="skill" data-s="safe database writes crm guardrail" onclick="go('skill')">
-        <div class="ent"><div class="avatar">SW</div><div><span class="nm">safe-database-writes</span><small>Propose-first writes with change log and approval</small></div></div>
-        <span class="c">Skill</span><span class="c">Platform</span><span class="c">Core v1.2.0 · 96% pass</span>
-        <div class="st"><span class="pill ok">Production</span></div></div>
-      <div class="trow" data-t="skill" data-s="voice drafting jamie drew caroline">
-        <div class="ent"><div class="avatar">VD</div><div><span class="nm">voice-drafting</span><small>Drafts in a person&rsquo;s voice from a voice profile</small></div></div>
-        <span class="c">Skill</span><span class="c">Platform</span><span class="c">Core v2.1.0 · 31 evals</span>
-        <div class="st"><span class="pill ok">Production</span></div></div>
-      <div class="trow" data-t="app" data-s="desk drive daily">
-        <div class="ent"><div class="avatar">DD</div><div><span class="nm">desk-drive</span><small>Runs the daily desk workflow</small></div></div>
-        <span class="c">App</span><span class="c">Caroline</span><span class="c">Laptop · no evals</span>
-        <div class="st"><span class="pill bad">Laptop</span><span class="pill">Active</span></div></div>
-      <div class="trow" data-t="app" data-s="eod inbox sweep jamie">
-        <div class="ent"><div class="avatar">EI</div><div><span class="nm">eod-inbox-sweep</span><small>End-of-day inbox triage · Jamie&rsquo;s copy</small></div></div>
-        <span class="c">App</span><span class="c">Jamie</span><span class="c">Laptop · scheduled</span>
-        <div class="st"><span class="pill warn">Duplicate ×3</span></div></div>
-      <div class="trow" data-t="app" data-s="spv campaign responder">
-        <div class="ent"><div class="avatar">SC</div><div><span class="nm">spv-campaign-responder</span><small>Answers SPV campaign inbound</small></div></div>
-        <span class="c">App</span><span class="c">Drew</span><span class="c">Laptop · scheduled</span>
-        <div class="st"><span class="pill">Active</span></div></div>
-      <div class="trow" data-t="app" data-s="new lp onboarding crm risk">
-        <div class="ent"><div class="avatar">LP</div><div><span class="nm">new-lp-onboarding</span><small>Onboards limited partners · writes CRM directly</small></div></div>
-        <span class="c">App</span><span class="c">Unassigned</span><span class="c">Laptop · no evals</span>
-        <div class="st"><span class="pill bad">Unguarded writes</span></div></div>
-      <div class="trow" data-t="skill" data-s="angellist navigator compliance">
-        <div class="ent"><div class="avatar">AN</div><div><span class="nm">angellist-navigator</span><small>AngelList access with the compliance guardrail</small></div></div>
-        <span class="c">Skill</span><span class="c">Platform</span><span class="c">2 copies · drifted</span>
-        <div class="st"><span class="pill bad">Drift</span></div></div>
-      <div class="trow" data-t="skill" data-s="meeting scheduler calendar">
-        <div class="ent"><div class="avatar">MS</div><div><span class="nm">meeting-scheduler</span><small>Books meetings under a person&rsquo;s preferences</small></div></div>
-        <span class="c">Skill</span><span class="c">Proposed</span><span class="c">3 copies · extraction filed</span>
-        <div class="st"><span class="pill warn">Candidate</span></div></div>
-      <div class="trow" data-t="skill" data-s="principal simulator judgment jamie drew">
-        <div class="ent"><div class="avatar">PS</div><div><span class="nm">principal-simulator</span><small>Predicts a principal&rsquo;s judgment before acting</small></div></div>
-        <span class="c">Skill</span><span class="c">Proposed</span><span class="c">2+ copies</span>
-        <div class="st"><span class="pill">Candidate</span></div></div>
-      <div class="trow" data-t="tool" data-s="email attachment sender">
-        <div class="ent"><div class="avatar">EA</div><div><span class="nm">email-attachment-sender</span><small>Sends mail with attachments · unit tested</small></div></div>
-        <span class="c">Tool</span><span class="c">Platform</span><span class="c">Core v1.0.2 · unit tests</span>
-        <div class="st"><span class="pill ok">Production</span></div></div>
-      <div class="trow" data-t="tool" data-s="compute grant shares math">
-        <div class="ent"><div class="avatar">GS</div><div><span class="nm">compute_grant_shares</span><small>Deterministic grant-share math</small></div></div>
-        <span class="c">Tool</span><span class="c">Platform</span><span class="c">Spec · tests pending</span>
-        <div class="st"><span class="pill">Draft</span></div></div>
+
+    <div class="prop">
+      <div class="prop-h"><span class="rk">1</span><h4><span class="mono">safe-crm-write</span></h4>
+        <span class="pill bad">extract</span><span class="pill warn">compliance stake</span></div>
+      <p class="why">Four applications write the investor database. Three route through a safe-write guardrail. One writes directly. The guardrail is enforced by convention, which means it is enforced by memory.</p>
+      <div class="gridhalf">
+        <div>
+          <div class="crit pass"><span class="m">✓</span><div><b>1. Propagation is required</b><p>A future change to the write rules must reach all four consumers without asking them.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>2. Correctness or compliance stake</b><p>Unguarded writes to the investor database. Passes on this criterion alone.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>3. Genuinely the same thing</b><p>Same inputs, same contract, same success condition across all four.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>4. Has, or can be given, an evaluation</b><p>Write-rejection cases are enumerable. Two days of work.</p></div></div>
+        </div>
+        <div>
+          <pre class="code">consumers:
+  <b>lp-report-builder</b>        <i>guarded</i>
+  <b>deal-notes-sync</b>          <i>guarded</i>
+  <b>portfolio-refresh</b>        <i>guarded</i>
+  <b>new-lp-onboarding</b>        <i>UNGUARDED</i>
+
+blast_radius:  investor database
+evaluation:    none
+owner:         unassigned
+first_seen:    survey, 22 Jul 2026</pre>
+        </div>
+      </div>
+      <div class="acts"><button class="btn sm">Approve extraction</button><button class="btn sec sm">Defer</button><button class="btn sec sm">Reject with reason</button></div>
+    </div>
+
+    <div class="prop">
+      <div class="prop-h"><span class="rk">2</span><h4><span class="mono">startup-ingest</span></h4>
+        <span class="pill bad">extract</span><span class="pill">predicted by plan-time misses</span></div>
+      <p class="why">Ingest a startup from a business plan, a deck, a website, and a LinkedIn profile, then analyse it. Built twice. Three separate PRDs asked for it in the last month and the registry could not supply it, so it is about to be built a third time.</p>
+      <div class="gridhalf">
+        <div>
+          <div class="crit pass"><span class="m">✓</span><div><b>1. Propagation is required</b><p>Adding a data source is worthless if only one of three applications receives it.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>2. Correctness stake</b><p>Feeds investment decisions. Divergent analysis across apps is a real hazard.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>3. Genuinely the same thing</b><p>Two implementations, one config flag apart.</p></div></div>
+          <div class="crit fail"><span class="m">✗</span><div><b>4. Has an evaluation</b><p>None, and analysis quality is harder to evaluate than write rejection. Estimate one week.</p></div></div>
+        </div>
+        <div>
+          <pre class="code">would_serve:
+  <b>investment-decision</b>       <i>built its own</i>
+  <b>mentor-match</b>             <i>built its own</i>
+  <b>cofounder-referral</b>       <i>planned, not built</i>
+
+functions:     parse, enrich, judge, rank, summarise
+model_routing: 4 of 5 could drop a tier
+sources:       plan, deck, site, LinkedIn
+              (SEC, PitchBook proposed)</pre>
+        </div>
+      </div>
+      <div class="note">Recommendation: approve, but sequence after <span class="mono">safe-crm-write</span>. The evaluation is the long pole, and extraction rate is capped by evaluation capacity, not by how much duplication exists.</div>
+      <div class="acts"><button class="btn sm">Approve extraction</button><button class="btn sec sm">Defer</button><button class="btn sec sm">Reject with reason</button></div>
+    </div>
+
+    <div class="prop">
+      <div class="prop-h"><span class="rk">3</span><h4><span class="mono">angellist-compliance</span></h4>
+        <span class="pill warn">patch in place</span></div>
+      <p class="why">A compliance guardrail hand-mirrored across two repositories. The copies have already diverged. The obvious move is to extract it. The obvious move is wrong.</p>
+      <div class="gridhalf">
+        <div>
+          <div class="crit pass"><span class="m">✓</span><div><b>1. Propagation is required</b></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>2. Compliance stake</b></div></div>
+          <div class="crit fail"><span class="m">✗</span><div><b>3. Genuinely the same thing</b><p>The two copies now encode different rules. Unifying them is a policy decision, not an engineering one, and it needs an owner who can say which rule is correct.</p></div></div>
+          <div class="crit fail"><span class="m">✗</span><div><b>4. Has an evaluation</b></div></div>
+        </div>
+        <div>
+          <pre class="code">recommendation: <i>patch in place</i>
+
+reason: reconcile the two rule sets
+        with a named owner first.
+        Extraction before reconciliation
+        would freeze one arbitrary
+        version as canonical.
+
+blocked_on: compliance owner
+next_review: next sweep</pre>
+        </div>
+      </div>
+      <div class="acts"><button class="btn sm">Assign owner</button><button class="btn sec sm">Defer</button></div>
+    </div>
+
+    <div class="prop">
+      <div class="prop-h"><span class="rk">4</span><h4><span class="mono">draft-like-jamie</span>, <span class="mono">draft-like-drew</span>, and four more</h4>
+        <span class="pill">leave alone</span></div>
+      <p class="why">Six per-person copies of the same drafting capability, the largest single block of duplication in the estate. It should not be extracted, and saying so is the point of having a test.</p>
+      <div class="gridhalf">
+        <div>
+          <div class="crit fail"><span class="m">✗</span><div><b>1. Propagation is required</b><p>The opposite. Drew does not want Jamie's improvements reaching him. Independence is the feature.</p></div></div>
+          <div class="crit fail"><span class="m">✗</span><div><b>2. Correctness stake</b><p>A badly drafted email is embarrassing, not dangerous.</p></div></div>
+          <div class="crit fail"><span class="m">✗</span><div><b>3. Genuinely the same thing</b><p>Same mechanism, six different judgements. That is six capabilities that rhyme.</p></div></div>
+          <div class="crit pass"><span class="m">✓</span><div><b>4. Could have an evaluation</b></div></div>
+        </div>
+        <div>
+          <pre class="code">recommendation: <i>leave alone</i>
+
+note: <b>caroline-voice.md</b> shows the
+      pattern that does work here. The
+      voice definition is factored into
+      a file and consumed by 11 skills.
+      Share the mechanism, keep the
+      judgement personal.
+
+follow_up: propose the file pattern to
+           the other five owners. No
+           extraction, no core entry.</pre>
+        </div>
+      </div>
+      <div class="acts"><button class="btn sec sm">Acknowledge</button></div>
     </div>
   </div>
 </section>
 
-<!-- ============ SKILL DETAIL ============ -->
-<section class="screen" id="skill">
-  <button class="backlink" onclick="go('catalog')">&larr; Back to catalog</button>
-  <div class="card"><div class="card-b pad" style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
-    <div class="avatar" style="width:48px;height:48px;font-size:15px">SW</div>
-    <div style="flex:1;min-width:240px">
-      <h1 style="font:500 22px/1.2 Fraunces,Georgia,serif">safe-database-writes</h1>
-      <p style="color:var(--muted);margin-top:4px">Every consequential write proposes first, logs the change, and waits for approval where policy requires it. No app touches the investor database without it.</p>
-      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
-        <span class="pill ok">Production</span><span class="pill">Core v1.2.0</span><span class="pill">Owner: Platform</span><span class="pill ok">96% eval pass</span>
-      </div>
-    </div>
-    <button class="btn sec">Use this skill</button>
-  </div></div>
-
-  <div class="statgrid">
-    <div class="statcard"><b>96%</b><small>Eval pass · 24 cases</small></div>
-    <div class="statcard"><b>1,204</b><small>Guarded writes · 30d</small></div>
-    <div class="statcard"><b>17</b><small>Writes held for approval</small></div>
-    <div class="statcard"><b>3/4</b><small>Consumers adopted</small><span class="d bad">1 outstanding</span></div>
-  </div>
-
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Contract</h3></div>
-        <div class="card-b pad">
-          <dl class="kv">
-            <dt>Does</dt><dd>Propose-first writes, change-log entries, rollback references, approval gates on consequential records</dd>
-            <dt>Never</dt><dd>Deletes records, writes outside declared tables, acts without a change-log entry</dd>
-            <dt>Systems</dt><dd>Investor CRM (Airtable) via scoped service identity</dd>
-            <dt>Approval</dt><dd>Human approval required for LP and portfolio records</dd>
-            <dt>Autonomy</dt><dd>Graduated from Shadow at 94% agreement · policy floor is 90%</dd>
-          </dl>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Consumers</h3><span class="sub">3 of 4 adopted</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="avatar">ID</div><div class="tx"><h4>investor-db-maintenance</h4><p>v1.2.0 · evals passing</p></div><div class="end"><span class="pill ok">Adopted</span></div></div>
-          <div class="lrow"><div class="avatar">CU</div><div class="tx"><h4>contact-update-sweep</h4><p>v1.2.0 · evals passing</p></div><div class="end"><span class="pill ok">Adopted</span></div></div>
-          <div class="lrow"><div class="avatar">QU</div><div class="tx"><h4>qualification</h4><p>v1.1.3 · upgrade available</p></div><div class="end"><span class="pill warn">Behind</span></div></div>
-          <div class="lrow"><div class="avatar">LP</div><div class="tx"><h4>new-lp-onboarding</h4><p>Writes the same CRM with no guardrail. Adoption ticket open.</p></div><div class="end"><span class="pill bad">Not adopted</span></div></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Release history</h3></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4>v1.2.0 <span style="color:var(--subtle);font-weight:400">· Aug 14</span></h4><p>Added rollback references. MERGE-GATE passed · 2 CODEOWNERS reviews.</p></div></div>
-          <div class="lrow"><div class="tx"><h4>v1.1.3 <span style="color:var(--subtle);font-weight:400">· Jul 30</span></h4><p>Guardrail unified from 3 drifted copies. skill-lint clean.</p></div></div>
-          <div class="lrow"><div class="tx"><h4>v1.0.0 <span style="color:var(--subtle);font-weight:400">· Jul 12</span></h4><p>Extracted from investor-db-maintenance. First core release.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ INTAKE ============ -->
-<section class="screen" id="intake">
+<!-- ============ REGISTRY ============ -->
+<section class="screen" id="registry">
   <div class="page-h">
-    <h1>Start something new</h1>
-    <p>Describe the job. Core searches the skills you already have, assigns requirements by risk, and opens the repository with the right controls in place.</p>
-  </div>
-
-  <div class="steps" style="max-width:760px">
-    <div class="card stepcard">
-      <div class="card-h"><h3>Describe the job to be done</h3></div>
-      <div class="card-b pad">
-        <textarea>Draft LP update emails in my voice, attach the quarterly one-pager, and hold everything for my approval before sending.</textarea>
-      </div>
-    </div>
-    <div class="card stepcard">
-      <div class="card-h"><h3>Existing skill check</h3><span class="sub">3 matches</span></div>
-      <div class="card-b">
-        <div class="lrow"><div class="avatar">VD</div><div class="tx"><h4>voice-drafting</h4><p>Drafts in your voice from your profile. Covers the writing.</p></div><div class="end"><span class="pill ok">Use as-is</span></div></div>
-        <div class="lrow"><div class="avatar">EA</div><div class="tx"><h4>email-attachment-sender</h4><p>Sends mail with attachments. Covers delivery.</p></div><div class="end"><span class="pill ok">Use as-is</span></div></div>
-        <div class="lrow"><div class="avatar">IT</div><div class="tx"><h4>inbox-triage</h4><p>Close, but built for incoming mail. Extend for outbound holds.</p></div><div class="end"><span class="pill warn">Enhance</span></div></div>
-        <div class="lrow"><div class="avatar">AQ</div><div class="tx"><h4>Approval queue for outbound sends</h4><p>No existing skill covers this. Scoped as new; eval suite required.</p></div><div class="end"><span class="pill">Build new</span></div></div>
-      </div>
-    </div>
-    <div class="card stepcard">
-      <div class="card-h"><h3>Choose the autonomy posture</h3></div>
-      <div class="card-b pad">
-        <p style="color:var(--muted);font-size:13px;margin-bottom:10px">Everything starts in Shadow. Graduation requires 90% agreement with your decisions. Measured, not vibes.</p>
-        <div class="radio-row">
-          <button class="chip active">Shadow — propose only</button>
-          <button class="chip">Approve first</button>
-          <button class="chip">Autonomous — after graduation</button>
-        </div>
-      </div>
-    </div>
-    <div class="card stepcard">
-      <div class="card-h"><h3>Requirements assigned by risk</h3></div>
-      <div class="card-b pad">
-        <p style="color:var(--muted);font-size:13px;line-height:1.6">Touches email and LP data, so Core assigns: managed runtime, scoped service identity, secrets in the approved store, eval suite before beta, cost attribution on every model call. The repository opens with branch protection and CODEOWNERS already set.</p>
-        <div style="margin-top:14px"><button class="btn">Open the repository &rarr;</button></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ RUNS ============ -->
-<section class="screen" id="runs">
-  <div class="page-h">
-    <h1>Runs &amp; observability</h1>
-    <p>Every run leaves evidence. Content stays off until the data policy is approved; metadata, tokens, and cost always record.</p>
-  </div>
-
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Scheduled &amp; headless</h3><span class="sub">last 24 hours</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="avatar">EI</div><div class="tx"><h4>eod-inbox-sweep (Jamie)</h4><p>6:02 PM · 41s · 12 messages triaged · 2 held for review</p></div><div class="end"><span class="pill ok">Succeeded</span></div></div>
-          <div class="lrow"><div class="avatar">CU</div><div class="tx"><h4>contact-update-sweep</h4><p>5:00 PM · 2m 18s · 34 proposed writes, all logged</p></div><div class="end"><span class="pill ok">Succeeded</span></div></div>
-          <div class="lrow"><div class="avatar">SC</div><div class="tx"><h4>spv-campaign-responder</h4><p>2:14 PM · AngelList session expired · alert sent to Drew</p></div><div class="end"><span class="pill bad">Failed</span></div></div>
-          <div class="lrow"><div class="avatar">DD</div><div class="tx"><h4>desk-drive</h4><p>9:00 AM · 4m 02s · still on Caroline&rsquo;s laptop, reporting via agent</p></div><div class="end"><span class="pill warn">Laptop</span></div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Error groups</h3><span class="sub">7 days</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4 class="mono">AngelListAuthError</h4><p>spv-campaign-responder · 4 events · first seen Aug 18</p></div><div class="end"><span class="pill bad">Open</span></div></div>
-          <div class="lrow"><div class="tx"><h4 class="mono">AirtableRateLimit (429)</h4><p>contact-update-sweep · 2 events · retried, recovered</p></div><div class="end"><span class="pill">Resolved</span></div></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Trace <span class="mono" style="color:var(--subtle)">#a41f</span></h3><span class="sub">va-school · 6:02 PM</span></div>
-        <div class="card-b">
-          <div class="t-row"><span class="n">run: grade-associate-memo</span><span class="m">8.4s</span><span class="m">6,120</span><span class="m">$0.11</span></div>
-          <div class="t-row lv1"><span class="n">skill: quality-check <small>v1.3</small></span><span class="m">2.1s</span><span class="m">1,842</span><span class="m">$0.04</span></div>
-          <div class="t-row lv1"><span class="n">skill: voice-drafting <small>v2.1</small></span><span class="m">3.6s</span><span class="m">3,905</span><span class="m">$0.06</span></div>
-          <div class="t-row lv2"><span class="n">tool: email-attachment-sender</span><span class="m">320ms</span><span class="m">&mdash;</span><span class="m">&mdash;</span></div>
-          <div class="t-row lv1"><span class="n">gate: human approval <small>held · Kyle</small></span><span class="m">&mdash;</span><span class="m">&mdash;</span><span class="m">&mdash;</span></div>
-          <p class="note">Content redacted by policy. Attribution: app va-school · env production · key vk-vaschool-prod.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Evals &amp; release gates</h3></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4>voice-drafting v2.1.0 · 31 cases</h4><p>LLM-judged against golden set · 97% pass · gate cleared</p></div><div class="end"><span class="pill ok">Pass</span></div></div>
-          <div class="lrow"><div class="tx"><h4>safe-database-writes v1.2.0 · 24 cases</h4><p>96% pass · 1 regression fixed before release</p></div><div class="end"><span class="pill ok">Pass</span></div></div>
-          <div class="lrow"><div class="tx"><h4>angellist-navigator · unification draft</h4><p>Eval suite being written from both drifted copies</p></div><div class="end"><span class="pill warn">In progress</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ USAGE ============ -->
-<section class="screen" id="usage">
-  <div class="page-h">
-    <h1>Usage &amp; cost</h1>
-    <p>Every model call routes through the gateway with a scoped key, so spend rolls up by application, skill, and person. No mystery invoices.</p>
-  </div>
-
-  <div class="statgrid">
-    <div class="statcard"><b>$1,067</b><small>Model spend · 30 days</small><span class="d">-12% vs prior</span></div>
-    <div class="statcard"><b>9.4M</b><small>Tokens · 30 days</small></div>
-    <div class="statcard"><b>2.9s</b><small>Median latency</small></div>
-    <div class="statcard"><b>100%</b><small>Calls attributed</small><span class="d">app + env + key</span></div>
-  </div>
-
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Budgets</h3><span class="sub">monthly, per key</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="avatar">VA</div><div class="tx"><h4>va-school</h4><p>$412 of $750 · 60 rpm · expires Nov 1</p></div>
-            <div class="end"><div class="prog"><i style="width:55%"></i></div><span class="pill ok">Healthy</span></div></div>
-          <div class="lrow"><div class="avatar">DD</div><div class="tx"><h4>desk-drive</h4><p>$286 of $300 · 30 rpm · expires Nov 1</p></div>
-            <div class="end"><div class="prog hot"><i style="width:95%"></i></div><span class="pill bad">95% used</span></div></div>
-          <div class="lrow"><div class="avatar">SC</div><div class="tx"><h4>spv-campaign-responder</h4><p>$164 of $400 · 30 rpm · expires Nov 1</p></div>
-            <div class="end"><div class="prog"><i style="width:41%"></i></div><span class="pill ok">Healthy</span></div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Spend by skill</h3><span class="sub">30 days</span></div>
-        <div class="card-b">
-          <div class="bar-row"><span>voice-drafting</span><div class="b"><i style="width:64%"></i></div><em>$389</em></div>
-          <div class="bar-row"><span>quality-check</span><div class="b"><i style="width:38%"></i></div><em>$231</em></div>
-          <div class="bar-row"><span>inbox-triage</span><div class="b"><i style="width:29%"></i></div><em>$176</em></div>
-          <div class="bar-row"><span>principal-simulator</span><div class="b"><i style="width:21%"></i></div><em>$127</em></div>
-          <div class="bar-row"><span>all other skills</span><div class="b"><i style="width:24%"></i></div><em>$144</em></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Model fit by capability</h3><span class="sub">model updater</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4>voice-drafting</h4><p>Candidate passes 97% at 40% lower cost. Upgrade recommended.</p></div><div class="end"><button class="btn sec">Approve</button></div></div>
-          <div class="lrow"><div class="tx"><h4>safe-database-writes</h4><p>Candidate ties on evals, no cost advantage.</p></div><div class="end"><span class="pill">Hold</span></div></div>
-          <div class="lrow"><div class="tx"><h4>inbox-triage</h4><p>Smaller model passes 94% on triage-only cases. Downgrade for cost.</p></div><div class="end"><button class="btn sec">Approve</button></div></div>
-          <div class="lrow"><div class="tx"><h4>principal-simulator</h4><p>Candidate regresses on judgment agreement. Do not upgrade.</p></div><div class="end"><span class="pill">Hold</span></div></div>
-          <p class="note">On each new model release every skill&rsquo;s evals re-run automatically. Recommendations wait for a human owner.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ ACCESS ============ -->
-<section class="screen" id="access">
-  <div class="page-h">
-    <h1>Access &amp; identity</h1>
-    <p>Humans sign in once through Google Workspace with MFA enforced. Applications hold their own service identities and gateway keys, so revoking a person never breaks a workflow.</p>
-  </div>
-
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>People</h3><span class="sub">8 builders</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="avatar round">K</div><div class="tx"><h4>Kyle</h4><p>Platform admin · SSO + MFA · access reviewed Aug 1</p></div><div class="end"><span class="pill warn">Admin</span></div></div>
-          <div class="lrow"><div class="avatar round">C</div><div class="tx"><h4>Caroline</h4><p>Builder · owns 11 skills, desk-drive · reviewed Aug 1</p></div><div class="end"><span class="pill">Builder</span></div></div>
-          <div class="lrow"><div class="avatar round">J</div><div class="tx"><h4>Jamie · Drew</h4><p>Builders · inbox and campaign apps · reviewed Aug 1</p></div><div class="end"><span class="pill">Builder</span></div></div>
-          <div class="lrow"><div class="avatar round">S</div><div class="tx"><h4>Sam</h4><p>Advisor · read-only, architecture review · expires Nov 6</p></div><div class="end"><span class="pill">Time-bound</span></div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Revocation preview</h3><span class="sub">the question that must answer clean</span></div>
-        <div class="card-b">
-          <p style="color:var(--muted);font-size:13px;padding:8px 0 2px">If <b style="color:var(--ink)">Caroline</b> left tomorrow:</p>
-          <div class="lrow"><div class="tx"><h4>3 gateway keys rotate automatically</h4><p>desk-drive and 2 skills re-key with no downtime</p></div><div class="end"><span class="pill ok">Clean</span></div></div>
-          <div class="lrow"><div class="tx"><h4>11 skills transfer to named backup owner</h4><p>Ownership map already designates Kyle</p></div><div class="end"><span class="pill ok">Clean</span></div></div>
-          <div class="lrow"><div class="tx"><h4>desk-drive still runs on her laptop</h4><p>Would stop. This is why laptop runtimes are a P0 migration.</p></div><div class="end"><span class="pill bad">Breaks</span></div></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-h"><h3>Machine identities</h3><span class="sub">gateway keys</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4 class="mono">vk-vaschool-prod</h4><p>va-school · production · claude only · $750/mo · rotated Aug 14</p></div><div class="end"><span class="pill ok">Active</span></div></div>
-          <div class="lrow"><div class="tx"><h4 class="mono">vk-deskdrive-prod</h4><p>desk-drive · production · claude only · $300/mo · rotated Aug 14</p></div><div class="end"><span class="pill ok">Active</span></div></div>
-          <div class="lrow"><div class="tx"><h4 class="mono">vk-sweeps-shared</h4><p>inbox sweeps · scheduled · claude only · $200/mo · rotated Jul 30</p></div><div class="end"><span class="pill ok">Active</span></div></div>
-          <div class="lrow"><div class="tx"><h4 class="mono">vk-legacy-drew</h4><p>personal · unscoped · any model · no budget · never rotated</p></div><div class="end"><span class="pill bad">Retire</span></div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Secrets</h3></div>
-        <div class="card-b pad">
-          <dl class="kv">
-            <dt>Store of record</dt><dd>1Password vaults, scoped per application and environment</dd>
-            <dt>Runtime</dt><dd>Injected from the hosting platform&rsquo;s secret store; never in source control</dd>
-            <dt>Scanning</dt><dd>Secret scanning on all priority repositories; push protection on</dd>
-            <dt>Rotation</dt><dd>Documented and tested for CRM, email, and AngelList integrations</dd>
-          </dl>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Audit trail</h3><span class="sub">privileged actions</span></div>
-        <div class="card-b">
-          <div class="lrow"><div class="tx"><h4>Key rotated: vk-vaschool-prod</h4><p>By platform · scheduled rotation · Aug 14, 6:00 AM</p></div><div class="end"><span class="pill">Logged</span></div></div>
-          <div class="lrow"><div class="tx"><h4>Approval granted: LP record update</h4><p>Kyle approved write held by safe-database-writes · Aug 19</p></div><div class="end"><span class="pill">Logged</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ SYSTEMS ============ -->
-<section class="screen" id="systems">
-  <div class="page-h">
-    <h1>Systems &amp; ownership</h1>
-    <p>Forty-eight systems. Every one gets an owner, and access recovers even when people leave. Transfers tracked to done, not to promised.</p>
-  </div>
-
-  <div class="statgrid">
-    <div class="statcard"><b>48</b><small>Systems registered</small></div>
-    <div class="statcard"><b>24</b><small>Designated for transfer</small></div>
-    <div class="statcard"><b>4</b><small>Transfers complete</small></div>
-    <div class="statcard"><b>8</b><small>No long-term owner</small><span class="d bad">assign this sprint</span></div>
+    <h1>Registry</h1>
+    <p>Generated from source on every run, never hand-maintained. Its primary reader is not a person, it is Claude over MCP. This screen is a window onto what the layer returns, provided so the platform owner can tell whether the descriptions are good enough to match against correctly.</p>
   </div>
 
   <div class="card">
-    <div class="thead" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <span>System</span><span>Admin today</span><span>Long-term owner</span><span>Machine identity</span><span class="r">Transfer</span></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">AL</div><span class="nm">AngelList</span></div>
-      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Personal OAuth</span>
-      <div class="st"><span class="pill warn">In progress</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">AS</div><span class="nm">Asana</span></div>
-      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Service account</span>
-      <div class="st"><span class="pill ok">Complete</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">AT</div><span class="nm">Airtable</span></div>
-      <span class="c">Fred</span><span class="c" style="color:var(--bad-ink)">Unassigned</span><span class="c">Personal API key</span>
-      <div class="st"><span class="pill bad">Not started</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">GW</div><span class="nm">Google Workspace</span></div>
-      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Scoped service identity</span>
-      <div class="st"><span class="pill warn">In progress</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">1P</div><span class="nm">1Password</span></div>
-      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">n/a · secrets root</span>
-      <div class="st"><span class="pill ok">Complete</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">GH</div><span class="nm">GitHub</span></div>
-      <span class="c">Fred</span><span class="c">Kyle</span><span class="c">Org app tokens</span>
-      <div class="st"><span class="pill warn">In progress</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">VC</div><span class="nm">Vercel</span></div>
-      <span class="c">Fred</span><span class="c" style="color:var(--bad-ink)">Unassigned</span><span class="c">Personal account</span>
-      <div class="st"><span class="pill bad">Not started</span></div></div>
-    <div class="trow" style="grid-template-columns:minmax(180px,1.4fr) 1fr 1fr 1.2fr 130px">
-      <div class="ent"><div class="avatar">NO</div><span class="nm">Notion</span></div>
-      <span class="c">Josh</span><span class="c">Kyle</span><span class="c">Integration token</span>
-      <div class="st"><span class="pill warn">In progress</span></div></div>
+    <div class="toolbar">
+      <input class="search" placeholder="Search the registry the way a model would: describe the job">
+      <button class="chip active">All 51</button>
+      <button class="chip">In the core 3</button>
+      <button class="chip">In an app 44</button>
+      <button class="chip">Dormant 4</button>
+    </div>
+    <div class="thead"><div>Capability</div><div>Where</div><div>Consumers</div><div class="r">Health</div></div>
+
+    <div class="trow link" onclick="go('capability')">
+      <div class="ent"><div class="avatar">SC</div><div><div class="nm">safe-crm-write</div><small>Write to the investor database with rejection rules applied</small></div></div>
+      <div class="c">in 4 apps</div>
+      <div class="c">4 consumers, 1 unguarded</div>
+      <div class="st"><span class="pill bad">no eval</span><span class="pill warn">proposed</span></div>
+    </div>
+    <div class="trow link" onclick="go('capability')">
+      <div class="ent"><div class="avatar">SI</div><div><div class="nm">startup-ingest</div><small>Ingest a startup from plan, deck, site and LinkedIn, then analyse</small></div></div>
+      <div class="c">in 2 apps</div>
+      <div class="c">2 built, 3 wanted</div>
+      <div class="st"><span class="pill bad">no eval</span><span class="pill warn">proposed</span></div>
+    </div>
+    <div class="trow">
+      <div class="ent"><div class="avatar">AC</div><div><div class="nm">angellist-compliance</div><small>Apply AngelList syndicate rules before a filing action</small></div></div>
+      <div class="c">in 2 repos</div>
+      <div class="c">2 consumers, diverged</div>
+      <div class="st"><span class="pill bad">diverged</span></div>
+    </div>
+    <div class="trow">
+      <div class="ent"><div class="avatar">CV</div><div><div class="nm">caroline-voice</div><small>Voice definition consumed as a file by 11 skills</small></div></div>
+      <div class="c">core</div>
+      <div class="c">11 consumers</div>
+      <div class="st"><span class="pill ok">healthy</span></div>
+    </div>
+    <div class="trow">
+      <div class="ent"><div class="avatar">ML</div><div><div class="nm">meeting-schedule</div><small>Propose and confirm meeting times across calendars</small></div></div>
+      <div class="c">in 3 apps</div>
+      <div class="c">3 near-identical</div>
+      <div class="st"><span class="pill warn">blocked, no eval</span></div>
+    </div>
+    <div class="trow">
+      <div class="ent"><div class="avatar">SF</div><div><div class="nm">stale-fact-lint</div><small>Flag assertions in generated text that are older than a threshold</small></div></div>
+      <div class="c">in 2 apps</div>
+      <div class="c">2 consumers</div>
+      <div class="st"><span class="pill warn">weak description</span></div>
+    </div>
+    <div class="trow">
+      <div class="ent"><div class="avatar">DD</div><div><div class="nm">desk-drive</div><small>Description too vague for a model to match against</small></div></div>
+      <div class="c">laptop</div>
+      <div class="c">unknown</div>
+      <div class="st"><span class="pill bad">weak description</span><span class="pill bad">laptop runtime</span></div>
+    </div>
   </div>
-  <p class="note">Showing 8 of 48 · full register in production view</p>
+
+  <div class="gridhalf">
+    <div class="card">
+      <div class="card-h"><h3>What a good entry looks like</h3><span class="sub">machine-readable</span></div>
+      <div class="card-b pad">
+        <pre class="code">id: <b>safe-crm-write</b>
+does: >
+  Writes a record to the investor
+  database after applying rejection
+  rules for duplicates, malformed
+  entities and unapproved fields.
+never: >
+  Deletes records. Writes without an
+  originating approval reference.
+touches: [investor-db]
+approval: required for bulk writes
+owner: unassigned
+evaluation: none
+status: proposed_for_core</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Why description quality is a bug class</h3></div>
+      <div class="card-b pad">
+        <p style="font-size:13.5px;color:var(--muted);line-height:1.65">The description is an API surface, because the thing reading it is deciding whether to reuse or rebuild.</p>
+        <p style="font-size:13.5px;color:var(--muted);line-height:1.65;margin-top:10px">A vague entry does not produce a bad search result. It produces a false negative, and a false negative produces a duplicate that ships. Six entries are currently rated weak, and each one is a duplicate waiting to happen.</p>
+        <p style="font-size:13.5px;color:var(--muted);line-height:1.65;margin-top:10px">This is tested, not proofread. The check is whether a model, given only the registry, correctly answers "do we already do this?" including the cases where the answer is no.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITY DETAIL ============ -->
+<section class="screen" id="capability">
+  <button class="backlink" onclick="go('registry')">← Registry</button>
+  <div class="page-h">
+    <h1>safe-crm-write</h1>
+    <p>A core capability is a contract with evidence attached: what it does, what it never does, who depends on it, and proof that the last change did not break them.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Contract</h3><span class="sub">v0.4.1 proposed</span></div>
+        <div class="card-b pad">
+          <dl class="kv">
+            <dt>Does</dt><dd>Writes a record to the investor database after applying rejection rules for duplicates, malformed entities, and unapproved fields.</dd>
+            <dt>Never does</dt><dd>Deletes records. Writes without an originating approval reference.</dd>
+            <dt>Systems touched</dt><dd>investor-db</dd>
+            <dt>Approval gate</dt><dd>Required for any write affecting more than 10 records</dd>
+            <dt>Owner</dt><dd><span class="pill bad">unassigned</span> cannot enter the core without one</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h3>Consumers</h3><span class="sub">the edge, not the node, is what breaks</span></div>
+        <div class="card-b">
+          <div class="lrow"><div class="avatar">LR</div><div class="tx"><h4>lp-report-builder</h4><p>Guarded. Would move to v0.4.1 on extraction.</p></div><div class="end"><span class="pill ok">ready</span></div></div>
+          <div class="lrow"><div class="avatar">DN</div><div class="tx"><h4>deal-notes-sync</h4><p>Guarded. Would move to v0.4.1 on extraction.</p></div><div class="end"><span class="pill ok">ready</span></div></div>
+          <div class="lrow"><div class="avatar">PR</div><div class="tx"><h4>portfolio-refresh</h4><p>Guarded, but on an older rule set. Needs reconciliation first.</p></div><div class="end"><span class="pill warn">lagging</span></div></div>
+          <div class="lrow"><div class="avatar">NL</div><div class="tx"><h4>new-lp-onboarding</h4><p>Writes the investor database directly. Never adopted the guardrail.</p></div><div class="end"><span class="pill bad">unguarded</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-h"><h3>Evidence</h3></div>
+        <div class="card-b">
+          <div class="lrow"><div class="tx"><h4>Evaluation</h4><p>None. Blocks entry to the core.</p></div><div class="end"><span class="pill bad">missing</span></div></div>
+          <div class="lrow"><div class="tx"><h4>Rejection cases enumerated</h4><p>17 identified from the three guarded implementations.</p></div><div class="end"><span class="pill ok">done</span></div></div>
+          <div class="lrow"><div class="tx"><h4>Rollback path</h4><p>Untested. Must be demonstrated before the fourth consumer migrates.</p></div><div class="end"><span class="pill warn">untested</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Why this one is first</h3></div>
+        <div class="card-b pad">
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.65">It is the only proposal in the queue that passes all four criteria today, and the only one where a wrong implementation writes bad data into the investor database rather than producing an awkward sentence.</p>
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.65;margin-top:10px">A compliance control enforced by copy-paste is a control by memory. This is the extraction that stops being one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAN TIME ============ -->
+<section class="screen" id="plantime">
+  <div class="page-h">
+    <h1>Plan time</h1>
+    <p>The only mechanism in the system that prevents duplication rather than recovering from it. It has no screen. Claude reaches the understanding layer through MCP tool calls during planning. This is a reconstruction, shown so the behaviour can be reviewed; nobody at Capital Factory would ever see the right-hand column.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Nick starts a new application</h3><span class="sub">Tuesday, 09:14</span></div>
+    <div class="flow">
+      <div>
+        <h5>What Nick sees</h5>
+        <div class="msg"><div class="who">Nick</div>I want an app that takes a startup we're considering and tells me which three mentors in the network are the best match.</div>
+        <div class="msg"><div class="who">Claude</div>A few questions. What sources should I use for the startup itself? Who is allowed to run this? Does a match need a human sign-off before it goes to the mentor?</div>
+        <div class="msg"><div class="who">Nick</div>Deck and website is fine. Anyone on the investment team. Yes, I approve before anything is sent.</div>
+        <div class="msg"><div class="who">Claude</div>Here is the PRD. Review it and tell me to go.</div>
+        <div class="msg hl"><div class="who">Claude</div>Built. It ingests the startup, ranks mentors, and holds each match for your approval. Want to try it on Atoms?</div>
+        <p class="note">Nick was never told that a registry exists, that two of his three components already existed, or that a capability was reused. He wrote a PRD and said go.</p>
+      </div>
+      <div>
+        <h5>What actually happened, over MCP</h5>
+        <pre class="code">PRD decomposed → <b>7 candidate capabilities</b>
+
+capability_search("ingest a startup from a deck
+        and a website, then analyse it")
+  → match <b>startup-ingest</b>          <i>0.94</i>
+    reused, 2 existing implementations
+    reconciled at extraction time
+
+capability_search("rank people in a network
+        against a profile")
+  → match <b>mentor-rank</b>             <i>0.71</i>
+    reused with one config change
+
+capability_search("hold an action for human
+        approval before sending")
+  → match <b>approval-gate</b>           <i>0.88</i>
+    reused from core
+
+capability_search("notify a mentor by email")
+  → <i>no match</i>
+    new work, logged for the sweep
+
+3 reused · 1 new · 3 app-specific
+duplication prevented: <b>2</b></pre>
+        <p class="note">The fourth query is as valuable as the three matches. A capability that several PRDs ask for and the registry cannot supply is a capability the estate is about to build several times.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gridhalf">
+    <div class="card">
+      <div class="card-h"><h3>What the MCP layer is being asked for</h3><span class="sub">last 30 days</span></div>
+      <div class="card-b pad">
+        <div class="bar-row"><span>matched and reused</span><div class="b"><i style="width:68%"></i></div><em>34</em></div>
+        <div class="bar-row"><span>matched, not used</span><div class="b"><i style="width:16%"></i></div><em>8</em></div>
+        <div class="bar-row"><span>no match, built new</span><div class="b"><i class="bad" style="width:26%"></i></div><em>13</em></div>
+        <div class="note">The middle row is the one to watch. A match that was found and then ignored means either the description oversold it or the capability is not good enough, and both are fixable.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Predicted duplication</h3><span class="sub">from repeated misses</span></div>
+      <div class="card-b">
+        <div class="lrow"><div class="tx"><h4>"notify someone by email with a template"</h4><p>Asked for by 4 PRDs. No match, four times.</p></div><div class="end"><span class="pill bad">×4</span></div></div>
+        <div class="lrow"><div class="tx"><h4>"summarise a long document for an exec"</h4><p>Asked for by 3 PRDs.</p></div><div class="end"><span class="pill warn">×3</span></div></div>
+        <div class="lrow"><div class="tx"><h4>"pull a company's funding history"</h4><p>Asked for by 2 PRDs.</p></div><div class="end"><span class="pill warn">×2</span></div></div>
+        <div class="note">These have not been built three and four times yet. They are about to be. This is the only view in the console that looks forward.</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ DECISIONS ============ -->
 <section class="screen" id="decisions">
   <div class="page-h">
-    <h1>Architecture decisions</h1>
-    <p>Context, alternatives, consequences, and who approved. These nine must be made before the platform hardens.</p>
+    <h1>Decisions</h1>
+    <p>Architecture decisions with their reasoning attached, readable by someone who was not in the room. A decision recorded without its reversal conditions is an opinion with a date on it.</p>
   </div>
 
   <div class="card">
+    <div class="card-h"><h3>Register</h3></div>
     <div class="card-b">
-      <div class="lrow"><div class="avatar">01</div><div class="tx"><h4>Shared capability distribution</h4><p>Repository content, package, MCP tools, managed plugin marketplace, or hybrid. Spike scheduled against the Claude private marketplace.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
-      <div class="lrow"><div class="avatar">02</div><div class="tx"><h4>Claude-specific or provider-neutral</h4><p>Gateway earns its keep only if attribution and budgets are required. Depends on provider policy.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
-      <div class="lrow"><div class="avatar">03</div><div class="tx"><h4>Catalog &amp; control-plane implementation</h4><p>Start GitHub-native and lightweight; adopt a portal product only when the need is proven.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
-      <div class="lrow"><div class="avatar">04</div><div class="tx"><h4>Secrets and machine identity</h4><p>1Password as store of record, runtime injection from hosting secret stores.</p></div><div class="end"><span class="pill ok">Accepted</span></div></div>
-      <div class="lrow"><div class="avatar">05</div><div class="tx"><h4>Observability content &amp; retention</h4><p>Metadata always; prompt and response content off until data classification is approved.</p></div><div class="end"><span class="pill bad">Blocked · needs data-policy owner</span></div></div>
-      <div class="lrow"><div class="avatar">06</div><div class="tx"><h4>Production hosting &amp; environments</h4><p>Preserve Vercel where it fits; managed compute for scheduled and server workloads. No Kubernetes.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
-      <div class="lrow"><div class="avatar">07</div><div class="tx"><h4>Evaluation platform &amp; release gates</h4><p>Evals gate every core release. Platform selection follows the content-logging decision.</p></div><div class="end"><span class="pill warn">In review</span></div></div>
-      <div class="lrow"><div class="avatar">08</div><div class="tx"><h4>Repository topology &amp; ownership</h4><p>One shared-core repository versus coordinated repositories. Owned with CODEOWNERS either way.</p></div><div class="end"><span class="pill">Proposed</span></div></div>
-      <div class="lrow"><div class="avatar">09</div><div class="tx"><h4>Platform posture</h4><p>Assemble commodity layers, build only the CF-specific thin layer. End-to-end agent platforms and full scratch-build considered and set aside; reopening conditions recorded.</p></div><div class="end"><span class="pill warn">Proposed</span></div></div>
+      <div class="lrow"><div class="avatar">10</div><div class="tx"><h4>ADR-010 · Core extraction or drift audit</h4>
+        <p>Resolved as a rule: extract when a change must propagate, audit when it must not. Four criteria, four reversal conditions.</p></div><div class="end"><span class="pill ok">accepted</span></div></div>
+      <div class="lrow"><div class="avatar">01</div><div class="tx"><h4>ADR-001 · Capability distribution</h4>
+        <p>Blocked on the plan-tier question. The managed plugin marketplace may collapse this into configuration.</p></div><div class="end"><span class="pill warn">blocked</span></div></div>
+      <div class="lrow"><div class="avatar">11</div><div class="tx"><h4>ADR-011 · Per-function model routing</h4>
+        <p>Gateway from the start, or deferred until the first multi-function capability exists in the core.</p></div><div class="end"><span class="pill">proposed</span></div></div>
+      <div class="lrow"><div class="avatar">05</div><div class="tx"><h4>ADR-005 · Observability and content capture</h4>
+        <p>Blocked on a named data-policy owner. Metadata only until then.</p></div><div class="end"><span class="pill warn">blocked</span></div></div>
+      <div class="lrow"><div class="avatar">07</div><div class="tx"><h4>ADR-007 · Evaluation bar for core entry</h4>
+        <p>The binding constraint on extraction rate. Needs a decision before the second extraction, not the first.</p></div><div class="end"><span class="pill">in review</span></div></div>
+      <div class="lrow"><div class="avatar">04</div><div class="tx"><h4>ADR-004 · Identity and machine credentials</h4>
+        <p>Received, not decided. Owned by the separate IT and security engagement. Design to depend on as little of it as possible.</p></div><div class="end"><span class="pill">external</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>ADR-010, in full</h3><span class="sub">the one the whole system rests on</span></div>
+    <div class="card-b pad">
+      <dl class="kv">
+        <dt>Question</dt><dd>Pull capabilities into a core, or leave applications heavy and run an auditor that finds drift?</dd>
+        <dt>Decision</dt><dd>Neither alone. Extraction decides where code lives; audit decides how you find out something should move. The rule: extract when a change to a capability must propagate, leave it and audit when a change must not.</dd>
+        <dt>Why not audit only</dt><dd>An auditor without a core produces proposals with nowhere to land, and cannot enforce a control. A control that depends on someone reading a weekly digest is not a control.</dd>
+        <dt>Why not extract everything</dt><dd>Two implementations that rhyme are not one capability. Forcing them together produces something that serves neither, and evaluation coverage caps how fast the core can safely grow anyway.</dd>
+        <dt>Reversal conditions</dt><dd>Fewer than four capabilities pass all criteria; or Anthropic ships a first-party registry that reads the existing format; or time from PRD to first working application increases after the first three extractions.</dd>
+      </dl>
     </div>
   </div>
 </section>
@@ -679,40 +699,32 @@
 </div></div>
 
 <footer><div class="container">
-  UX mockup with illustrative data. Counts and named items drawn from the CF Read-Ahead repository survey (July 22, 2026) and the Technology Program operating mandate v0.6 (August 6, 2026); metrics for screens that do not yet exist are invented to demonstrate the target state. Not a Capital Factory production system.
+  Working concept for discussion. Illustrative data throughout; this describes no running system.<br>
+  Counts are Reported from the July 22, 2026 repository survey and are unverified. Requirements shown are Verified from the sponsor call of August 26, 2026.<br>
+  The eight people who build applications at Capital Factory are not users of this console, by design.
 </div></footer>
 
 <script>
+  const navs=document.querySelectorAll('.topnav button');
   function go(id){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.topnav button').forEach(b=>b.classList.toggle('active', b.dataset.nav===id));
-    window.scrollTo({top:0});
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+    navs.forEach(b=>b.classList.toggle('active',b.dataset.nav===id));
+    window.scrollTo(0,0);
   }
-  document.querySelectorAll('.topnav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
+  navs.forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
 
-  const rows=[...document.querySelectorAll('#catrows .trow')];
-  let filter='all';
-  function apply(){
-    const q=document.getElementById('q').value.toLowerCase();
-    rows.forEach(r=>{
-      const okT = filter==='all' || r.dataset.t===filter;
-      const okQ = !q || (r.dataset.s+' '+r.textContent.toLowerCase()).includes(q);
-      r.style.display = okT&&okQ ? '' : 'none';
-    });
-  }
-  document.querySelectorAll('.toolbar .chip').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.toolbar .chip').forEach(x=>x.classList.remove('active'));
-    c.classList.add('active'); filter=c.dataset.f; apply();
+  const root=document.documentElement, btn=document.getElementById('themeBtn');
+  btn.addEventListener('click',()=>{
+    const dark=root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme',dark?'light':'dark');
+    btn.textContent=dark?'Dark mode':'Light mode';
+  });
+
+  document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',e=>{
+    const row=e.target.closest('.toolbar');
+    row.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    e.target.classList.add('active');
   }));
-  document.getElementById('q').addEventListener('input',apply);
-
-  const themeBtn=document.getElementById('themeBtn');
-  function setTheme(t){
-    document.documentElement.dataset.theme=t;
-    themeBtn.textContent = t==='light' ? 'Dark mode' : 'Light mode';
-  }
-  themeBtn.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light'));
 </script>
 </body>
 </html>

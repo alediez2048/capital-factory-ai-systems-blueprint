@@ -1,67 +1,84 @@
 # Capital Factory AI Systems Blueprint
 
-Status: Working draft for discovery and proposal development  
-Prepared by: Jorge Alejandro Diez  
-Last updated: August 20, 2026
+Status: Working draft. Revised August 29, 2026 following the discovery session of August 26.
+Prepared by: Jorge Alejandro Diez
 
-## Purpose
+## What this is
 
-This repository organizes the current understanding of Capital Factory's AI application estate and defines a practical path toward a governed, reusable, production-ready shared AI core.
+A worked architecture for making reuse the default outcome of building an application at Capital Factory, without anyone having to think about it.
 
-It is intended to support three outcomes:
+The estate has roughly fifty-one packaged items across five repositories, thirty-one applications, about sixteen capabilities, ten of them implemented more than once, and one evaluation suite. The analysis was already done in-house. The gap is not analysis. It is that nothing asks "do we already do this?" before someone builds it.
 
-1. Run a focused discovery and access audit with Capital Factory.
-2. Convert verified findings into production requirements and architecture decisions.
-3. Produce a credible 90-day implementation proposal and executive presentation.
+## The shape of the answer
 
-## Current position
+**The system of execution does not move.** GitHub is GitHub. Vercel is Vercel. Applications stay deployed where they are. Nothing migrates and nobody stops shipping.
 
-Capital Factory has already completed meaningful architectural analysis. Provided materials report:
+**A system of understanding gets built underneath it.** A structured model of what Capital Factory has, exposed to Claude through MCP, kept current by a weekly loop that learns from every new application.
 
-- 51 packaged items across five GitHub repositories.
-- 31 applications and approximately 16 reusable capabilities.
-- Approximately 10 capabilities implemented more than once.
-- 40 of 51 items described as strongly documented.
-- No central capability repository.
-- One identified evaluation suite.
-- A proposed four-layer architecture separating applications, shared skills, deterministic tools, and systems of record.
-- 48 business systems in the systems and administrative ownership register, with ownership transfers and long-term ownership still requiring attention.
+Four properties, in the order they were decided:
 
-The principal gap is not a lack of AI ideas. It is the transition from documented strategy and distributed experiments to an accountable, governed, observable operating system.
+1. **Map what exists.** Repositories, skills, APIs and MCPs, deployments, data sources, turned into a structured understanding of the capabilities already built.
+2. **Make it available to Claude.** An MCP layer, so that before building something new, Claude checks what already exists, what can be reused, what standards apply, and where the relevant systems live.
+3. **Close the loop.** As applications get built, the system learns from them, finds duplication and drift, and keeps the shared understanding current. Every new application should make the next one easier.
+4. **Keep it invisible.** Employees keep working through Claude and the tools they already use. Nobody browses a catalog, because nobody should have to know the layer exists.
 
-## Evidence labels
+## The three decisions
 
-All important statements should use one of these labels:
+Set out in full, with reasoning and reversal conditions, in `architecture-decision.md`.
 
-- **Verified** - confirmed through an authoritative system, repository, or responsible owner.
-- **Reported** - stated in Capital Factory-provided materials but not independently confirmed.
-- **Proposed** - a recommendation for discussion.
-- **Unknown** - information still required.
+**What do we do with a duplicate?** Extraction and audit are not competing approaches. Extraction decides where code lives; audit decides how you find out something should move. The rule: extract when a change must propagate, leave it and audit when a change must not. Four criteria decide each case.
 
-Unless explicitly marked verified or approved, architecture and technology selections in this repository remain provisional.
+**How does the answer reach the builder?** Not through a new interface. Claude is already the interface, so Capital Factory becomes something Claude can query. The layer serves metadata about capabilities and never the data those capabilities touch, which is both the right boundary and what makes it deliverable.
+
+**How does the layer learn what exists?** By reading the repositories first, and adding a connector only when a named question cannot be answered without one. A multi-connector ingestion pipeline is the part of this system most likely to be commoditized within two model releases, and it is the part with nothing to connect to at Station.
+
+## The design rule underneath
+
+> Keep the machinery thin, standard, and disposable. Make the organizational context durable and compounding.
+
+Cross-repository understanding, duplicate detection, and skill packaging will very likely be commoditized. What Capital Factory knows about itself will not be. The model's content is the asset; every piece of machinery that reads or serves it should be built to be deleted.
 
 ## Documents
 
 | Document | Purpose |
 | --- | --- |
-| [discovery.md](discovery.md) | Essential questions and access needed for the initial audit |
-| [requirements.md](requirements.md) | Proposed production, security, AI, and operational requirements |
-| [system-design.md](system-design.md) | Conceptual target architecture and system boundaries |
-| [technical-stack.md](technical-stack.md) | Platform posture (assemble and build thin), rejected alternatives, candidate components, and validation gates |
-| [90-day-proposal.md](90-day-proposal.md) | Proposed phased engagement and measurable outcomes |
-| [sources/README.md](sources/README.md) | Register of materials used to build the blueprint |
+| [architecture-decision.md](architecture-decision.md) | The three decisions, with trade-offs and the conditions that would reverse each |
+| [system-design.md](system-design.md) | The system that follows: model, MCP surface, weekly loop, operator console |
+| [prd.md](prd.md) | What the product is: consumers, jobs, surfaces, release phases, metrics |
+| [requirements.md](requirements.md) | What the system must guarantee, with identity and security preserved in an annex |
+| [90-day-proposal.md](90-day-proposal.md) | Five-stage implementation sequence, the MVP, and an acceptance test per stage |
+| [discovery.md](discovery.md) | What is still unknown, what the session answered, and what moved out of scope |
+| [technical-stack.md](technical-stack.md) | Platform posture, rejected alternatives, candidate components |
+| [prior-art.md](prior-art.md) | Survey of platforms that solve part of this, and why none is adopted wholesale |
+| [mockup.html](mockup.html) | Working concept of the operator console. Illustrative data only |
+| [deepresearch.md](deepresearch.md) | Background on Capital Factory, its portfolio, and its market position |
+| [styleguide.md](styleguide.md) | Digital style guide |
+| [voice.md](voice.md) | Writing voice |
+| [sources/README.md](sources/README.md) | Register of materials used |
+
+## Evidence labels
+
+- **Verified** - confirmed through an authoritative system, repository, responsible owner, or directly in the discovery session.
+- **Reported** - stated in Capital Factory materials but not independently confirmed.
+- **Proposed** - a recommendation for discussion.
+- **Unknown** - information still required.
+
+Unless marked verified or approved, architecture and technology selections here remain provisional.
+
+## Vocabulary
+
+Capability rather than skill. The core. The middle layer. Like an SDK. These are Capital Factory's own words and they are used in preference to ours.
 
 ## Scope boundaries
 
-This repository is not currently:
+This is not an approved production specification, not the future shared-core source repository, not a complete inventory, not authorization to access any system, and not a commitment to any vendor.
 
-- An approved Capital Factory production specification.
-- The future shared-core source repository.
-- A complete inventory of every application, system, identity, integration, or data flow.
-- Authorization to access or modify Capital Factory systems.
-- A commitment to a specific vendor or cloud platform.
+It does not cover identity, SSO, or systems administration, which belong to a separate IT and security engagement. The relevant requirements are preserved in the annex to `requirements.md` so that whoever takes that work starts from evidence rather than from zero.
 
-## Immediate next decision
+It does not propose anything for Station. Standing the environment up against an empty estate is the strongest argument for this architecture, but what Station needs should come from talking to Station.
 
-The next step is a focused discovery session with Capital Factory to confirm the mandate, obtain least-privilege read-only access, verify the five-repository inventory, and select the first production proof point.
+## The first thing to find out
 
+How the fifty-one items actually reach the systems they touch. In many cases MCPs, in some cases an API or something custom built, and the distribution is currently unknown.
+
+If it is a handful of shared MCP servers, the understanding layer has a clean seam to sit on and extraction is largely packaging. If it is thirty-one hand-rolled integrations, this is a different project. Everything estimated downstream of that question is labelled as an estimate for exactly this reason.

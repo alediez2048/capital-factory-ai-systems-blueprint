@@ -1,138 +1,172 @@
 # Discovery and Access Audit
 
-Status: Evidence-triaged working draft
-Last updated: August 20, 2026
-Objective: Collect only the evidence still required to finalize requirements, architecture, technical stack, and a credible 90-day scope.
+Status: Revised after the Gordon Daugherty call of August 26, 2026.
+Objective: collect only the evidence still required. Questions the call answered have been moved out of the interview and into the record.
 
-## Evidence review completed
-
-This question set was checked against the following materials available in the blueprint workspace:
-
-- `Technology Leadership and Operating Mandate - Capital Factory Technology Program`, working draft 0.6, August 6, 2026.
-- `CF Read-Ahead - Claude Architecture`, repository survey dated July 22, 2026.
-- The current blueprint source register and proposed 90-day program.
-
-The AI Application Inventory, Systems and Admin Ownership Register, and Venture Associate School PRD are referenced by the mandate but were not available for direct inspection in this workspace. Claims attributed to those sources remain `Reported`, not independently verified. The CollabBoard documents are formatting examples and were not used as evidence about Capital Factory.
+Evidence base: the operating mandate (working draft 0.6, August 6, 2026), the Claude Architecture read-ahead (repository survey, July 22, 2026), and `call-notes-gordon.md`, which is now the primary source. Where the mandate and the call conflict, the call wins and the conflict is named.
 
 ## Status definitions
 
-- **Answered - reported:** The supplied materials state an answer clearly, but the responsible owner or authoritative system has not yet confirmed it.
-- **Partially answered:** The materials provide direction or a subset of the answer; a material decision or operational detail remains open.
-- **Unanswered:** The supplied materials do not provide an answer.
-- **Verification required:** A documentary answer exists, but repository, administrative-console, configuration, billing, or stakeholder evidence is still required.
+- **Answered - verified on the call:** the sponsor stated it directly.
+- **Answered - reported:** the supplied materials state it, but no owner has confirmed it.
+- **Partially answered:** direction exists, a material decision remains open.
+- **Unanswered.**
+- **Out of scope:** assigned elsewhere by the sponsor. Recorded, not pursued.
 
-This document should guide structured conversations and technical walkthroughs rather than be sent as one large questionnaire. Each confirmed answer should retain an owner, evidence source, date, and status.
+---
+
+## Answered on the call, removed from the interview
+
+Present these for confirmation rather than asking them.
+
+| Was | Now |
+| --- | --- |
+| Q15, who authored the architecture deck | Gordon wrote it himself, by prompting Claude to survey the repositories. "That's my presentation, by the way. That's the work that I did that myself." |
+| Q1, is the architecture approved or open to revision | Open, emphatically. "Ignore the approach that I was thinking we would take unless you conclude it is a viable approach." Answered in `architecture-decision.md`. |
+| Q2, what decision does this support | Engagement of one operator for an architecture-and-core project, priced by milestone, with the app layer as a separate later project. |
+| Q5, what is outside the 90-day scope | Identity and systems administration, the app layer, and any application migration. See the exclusion list in `90-day-proposal.md`. |
+| Q29, does $10,000 per month cover only labour | Obsolete. Retainer pricing is replaced by milestones. |
+| Q12, is VA School the proof point | Never mentioned by the sponsor in fifty-six minutes. The premise came from the mandate alone and has been withdrawn. |
+| Q25, what must work by Day 90 | Restated as five milestone acceptance tests, each independently checkable. |
+| Q31, volunteers | Not raised. Hours are the operator's to manage: "One week you work twenty or twenty five hours, another week you work thirty five. It's up to you." |
+
+---
+
+## P0 - The one question everything depends on
+
+| ID | Question | Status | What we know | What is needed |
+| --- | --- | --- | --- | --- |
+| **14** | **How do the fifty-one items actually reach the systems they touch?** | **Unanswered, and the sponsor said so** | "In many cases it's MCPs, some cases it's maybe an API or something custom built. I don't know." | A per-application map: MCP server, direct API, custom integration, or human in the loop. Every extraction estimate in every other document is an informed guess until this exists. This is Milestone 1. |
+
+If the estate reaches its systems through a handful of shared MCP servers, extraction is mostly packaging. If it reaches them through thirty-one hand-rolled integrations, this is a different project, and the honest thing is to say so in week three rather than month three.
+
+---
 
 ## P0 - Mandate and authority
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
+| ID | Question | Status | What we know | What is needed |
 | --- | --- | --- | --- | --- |
-| 1 | Is the shared-skills architecture approved, or should the operator validate it before implementation? | **Partially answered** | The Claude Architecture deck presents a four-layer target architecture and a path for centralizing shared skills. The mandate treats a shared core as an immediate need and calls for its first release. | Confirm whether the deck is an approved constraint or a proposed hypothesis the operator may revise. |
-| 2 | What exact decision should this proposal support? | **Answered - reported** | The mandate recommends approving a 90-day program, engaging one full-time on-site operator-engineer at a working contractor budget of $10,000 per month, establishing the shared AI core, stabilizing systems/IAM, and supporting one priority application. | Confirm whether Runpoint is seeking approval to begin the search, approval of the delivery mandate, or both in the next decision meeting. |
-| 3 | Who is the executive sponsor, day-to-day decision-maker, and final acceptance owner? | **Partially answered** | Gordon is the executive sponsor; Kyle provides day-to-day direction; Sam leads sourcing and provides technical supervision and architectural review. | The final acceptance owner for the Day-90 production proof is not named. |
-| 4 | Which decisions may the operator make independently, and which require stakeholder approval? | **Partially answered** | Gordon sets priorities and approves budget and access. Kyle supplies daily context, decisions, and issue removal. Sam reviews architecture and delivery choices. The operator owns hands-on execution and program integration. | Define approval thresholds for architecture, production changes, security exceptions, spending, data access, and scope changes. |
-| 5 | What is explicitly outside the 90-day scope? | **Unanswered** | The mandate defines outcomes but does not provide a formal exclusion list. It does not promise remediation of every system or migration of every application. | Approve explicit exclusions, including any systems, applications, migrations, compliance work, procurement, or support obligations. |
-| 6 | Who will own and maintain the resulting platform after Day 90? | **Unanswered** | Employment after the engagement is described as possible, and a long-term staffing recommendation is a Day-90 output. No permanent platform owner is designated. | Name the intended business and technical owners or make owner selection an explicit program decision. |
+| 3 | Who is the executive sponsor and final acceptance owner? | **Partially answered** | Gordon is sponsor and, for now, acting architect: "I seem to be the only one on the team that is thinking about our architecture." Sam advises on the hiring decision. | Whether Gordon accepts each milestone himself or delegates. |
+| 4 | Which decisions may the operator make independently? | **Partially answered** | Architecture judgment is explicitly delegated. Nothing may change an application without approval. | Thresholds for spend, data access, and scope change. |
+| 6 | Who owns the platform after the engagement? | **Unanswered** | Not raised on the call. The console in `prd.md` has exactly one user and that user is unnamed. | Name the intended owner, or make owner selection an explicit milestone-5 output. |
+| 34 | What is Kyle's role in this engagement? | **Unanswered** | The mandate names him for day-to-day direction. He was not mentioned once on the call. | Confirm whether he is involved at all. |
 
-## P1 - Current application estate
+---
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
+## P1 - The estate
+
+| ID | Question | Status | What we know | What is needed |
 | --- | --- | --- | --- | --- |
-| 7 | Can the operator receive read-only access to the five GitHub repositories and current inventory? | **Unanswered** | A read-only survey of five repositories was completed for the architecture deck, and the mandate says to use the inventory during intake. This does not establish that the future operator has been approved for access. | Confirm access sponsor, repository scope, onboarding method, and timing. |
-| 8 | What has changed since the July 22, 2026 architecture survey? | **Unanswered** | No change log or refreshed inventory was supplied. | Re-scan the repositories and reconcile additions, removals, deployments, owners, and material code changes. |
-| 9 | Which of the 51 packaged items are active, beta, experimental, paused, duplicated, or retirement candidates? | **Unanswered** | The deck counts 51 items and documents duplicated capabilities. The mandate identifies 31 applications, 16 capabilities, two tools, and one configuration layer, but does not provide lifecycle classifications. | Validate status and business value item by item, starting with priority applications and duplicated capabilities. |
-| 10 | Who owns each priority application? | **Unanswered** | No complete business-owner, technical-owner, primary-contact, and backup-contact map was available. | Build the application ownership map from the inventory and stakeholder interviews. |
-| 11 | Where does each active application run? | **Partially answered** | The mandate reports hosting split across employee-local and central environments, with Vercel usage and GitHub operating policy incomplete. | Produce an application-by-application deployment map covering provider, project/account, environment, domain, secrets, data stores, and owner. |
-| 12 | Which application should be the Day-90 production proof point? | **Partially answered** | The mandate explicitly recommends VA School as the immediate proof point and reports beta testing with an August 10 rollout target. | Confirm its present post-target status, current owner, production risk, acceptance owner, and whether it remains the best proof point. |
+| 7 | Read-only access to the five repositories | **Unanswered** | The survey was done by Gordon with Claude. That does not establish operator access. | Access sponsor, repository scope, onboarding method, timing. This gates Milestone 1. |
+| 8 | What changed since July 22, 2026? | **Unanswered** | No change log supplied, and the team has kept shipping throughout. | Re-scan and reconcile. |
+| 9 | Which of the fifty-one are live versus dormant? | **Unanswered** | No lifecycle classification exists. | Live-versus-dormant status per item. A duplication count that includes dead code overstates the problem and misdirects the first extractions. |
+| 10 | Who owns each application? | **Unanswered** | Three builders named across the materials and the call: Gordon, Jamie, Nick. Drew and Caroline appear in the survey. | Business owner, technical owner, and backup per priority application. |
+| 11 | Where does each application run? | **Partially answered** | Hosting is split between employee-local and central, with Vercel in use. | Provider, environment, secrets location, and owner per application. Laptop runtimes are a coverage gap the console must surface. |
+| 35 | Which capabilities have an evaluation? | **Answered - reported** | One evaluation suite across fifty-one items. | Confirm. This single number caps how fast the core can safely grow and is the binding constraint on Milestone 5. |
 
-## P1 - Shared AI core
+---
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
+## P1 - The core
+
+| ID | Question | Status | What we know | What is needed |
 | --- | --- | --- | --- | --- |
-| 13 | What is a "skill" technically today? | **Partially answered** | The deck defines a skill conceptually as one reusable, contract-based competency that multiple apps can call; apps own end-to-end jobs, tools are deterministic code, and data/systems are systems of record. | Inspect representative repositories to determine actual packaging: Markdown, code, MCP tools, scripts, services, or combinations. |
-| 14 | How do applications discover, load, invoke, and update existing skills? | **Unanswered** | The deck describes the intended shared-repository model and downward call flow, not the current runtime and distribution mechanics. | Document current and proposed discovery, versioning, dependency, invocation, release, and upgrade paths. |
-| 15 | Who created the Claude Architecture deck and conducted the repository survey? | **Partially answered** | The PowerPoint metadata identifies Gordon Daugherty as the last person to modify the deck. That does not establish authorship or who performed the survey. | Confirm the author, surveyor, methodology, repository access used, and accountable technical reviewer. |
-| 16 | Which duplicated capability is the safest and most valuable first extraction candidate? | **Partially answered** | The deck identifies voice drafting, safe database writes, meeting scheduling, inbox triage, AngelList compliance, principal simulation, stale-fact linting, and the autonomy ladder as duplicated. Safe database writes has a documented missing guardrail, making it a strong risk-led candidate; voice drafting is also used broadly. | Score candidates by risk reduction, consumer count, coupling, testability, migration effort, and business value; obtain owner approval. |
-| 17 | How do the marketplace, `CODEOWNERS`, `MERGE-GATE`, `skill-lint`, and evaluation suite work today? | **Partially answered** | The deck reports that all five mechanisms exist in production and proposes reusing them for the shared core. | Inspect configurations, enforcement points, owners, coverage, failure behavior, and evidence that controls cannot be bypassed. |
-| 18 | Is Claude required, preferred, or one supported provider? | **Unanswered** | The source deck is Claude-specific and proposes rerunning evaluations on new Claude model releases. It does not state a contractual or architectural requirement to remain Claude-only. | Confirm provider policy, portability expectations, approved models, data terms, and whether model routing is in scope. This decision is now coupled to the distribution choice in technical-stack.md (ADR-001/ADR-002). |
-| 33 | What Anthropic plan does Capital Factory hold, and is the private plugin marketplace available to it? | **Unanswered** | The revised stack analysis proposes a Phase 1 spike distributing one existing skill through the Claude Enterprise private plugin marketplace. Marketplace availability, seat coverage for the 8 builders, and admin/telemetry features depend on the plan tier, which no supplied material states. | Confirm plan tier, seats, admin console access, and whether org-scoped marketplaces and OpenTelemetry usage export are enabled; this gates the distribution spike. |
+| 13 | What is a capability technically today? | **Partially answered** | Conceptually defined in the deck. Packaging unverified. | Inspect representative repositories: Markdown, code, MCP tools, scripts, services, or combinations. |
+| 16 | Which duplicated capability is the first extraction? | **Deliberately deferred** | Safe database writes has a documented missing guardrail and is the strongest risk-led candidate. Voice drafting is the most widely duplicated but likely fails the propagation criterion, since Drew does not want Jamie's improvements. | This is an output of the first sweep, not a decision to make in advance. Answering it early would be guessing. |
+| 17 | How do the marketplace, CODEOWNERS, MERGE-GATE, skill-lint, and the eval suite work today? | **Partially answered** | All five reported in production, none aimed at a shared layer. | Configurations, enforcement points, coverage, and whether the controls can be bypassed. |
+| 18 | Is Claude required, preferred, or one supported provider? | **Partially answered** | The sponsor talks in Claude model names throughout and reasons about per-function model selection within the Claude family. No portability requirement stated. | Confirm. This gains weight because per-function routing is now a named product capability. |
+| 33 | What Anthropic plan tier, and is the private plugin marketplace available? | **Unanswered** | Gates the distribution spike in `technical-stack.md`. | Plan tier, seats for the eight builders, admin console access, telemetry export. |
+| 36 | What would count as evidence that the audit-only model is right after all? | **Answered - proposed** | Time from plan to first working application, measured before and after the first extractions. If it goes the wrong way, the core is wrong for this team. | Agreement that this is a fair test. |
+| 44 | Can an MCP server be distributed to all eight builders' Claude environments without per-person setup? | **Unanswered** | The understanding layer reaches builders through MCP, which is the mechanism that keeps it invisible. If distribution requires each person to configure something, the invisibility constraint is compromised at the point of installation. | Confirm how builder environments are managed, and whether org-level MCP configuration is available on the current plan. |
+| 45 | Is there anything in the repositories that a reader could not determine without a connector? | **Unanswered** | The population method is read-through first. This question is the trigger for adding a connector. Deployment reality is the expected first exception, since whether an application is live is not reliably in source. | List the questions the repositories cannot answer, before building anything to answer them. |
+| 46 | What standards should a new application follow, and where are they written down? | **Unanswered** | `standards_get` is one of the six MCP tools, and it assumes such standards exist in retrievable form. CODEOWNERS, MERGE-GATE and skill-lint are reported as in production, which is a partial answer. | Identify what exists as written convention versus what lives in people's heads. |
 
-## P1 - Identity, security, and data
+---
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
-| --- | --- | --- | --- | --- |
-| 19 | Who administers the critical systems and accounts? | **Partially answered** | The mandate reports 48 systems; current owner or super-admin responsibility for 21 sits with Josh and nine with Fred. Twenty-four are designated for temporary transfer to Kyle, only four are marked complete, and eight lack a long-term owner. | Inspect the ownership register and confirm the administrator, recovery owner, long-term owner, backup, and transfer state for every priority system. |
-| 20 | Which systems depend on personal identities, shared credentials, or former employees? | **Partially answered** | The mandate explicitly identifies critical-system dependence on individual identities and unclear ownership as an immediate risk. It does not enumerate shared credentials or former-employee dependencies. | Verify identity type, recovery path, credential custody, employment status, and break-glass access system by system. |
-| 21 | What sensitive data do priority applications access or transmit to AI providers? | **Partially answered** | The mandate reports that several critical SaaS systems contain sensitive data or control important work. No application-level data-flow or AI-provider disclosure inventory was supplied. | Map data classes, systems of record, model/provider destinations, retention, subprocessors, and approval requirements for the reference application. |
-| 22 | May prompts, responses, tool inputs, and traces be stored externally? | **Unanswered** | No observability data policy was supplied. | Obtain a decision from the security/data owner by data classification and environment. |
-| 23 | What SSO, MFA, service-account, access-review, and offboarding standards exist? | **Unanswered** | The mandate calls for practical IAM standards to be put into use, which indicates the desired work but does not document the current standard. | Collect current policies and configurations, then identify gaps against the approved operating standard. |
-| 24 | What security, contractual, regulatory, or retention restrictions apply? | **Unanswered** | No authoritative policy, contract inventory, regulatory classification, or retention schedule was supplied. | Identify policy and legal owners and obtain applicable requirements before final architecture approval. |
+## P1 - Station
 
-## P1 - Production and acceptance
+New scope from the call. The sponsor's instruction: "Don't make any proposals there. Just know that I probably do want some time in the first three weeks or so."
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
-| --- | --- | --- | --- | --- |
-| 25 | What must demonstrably work by Day 90? | **Answered - reported** | The mandate defines three proofs: a practical IAM model in use, the first shared AI core release working, and one priority workflow operating on managed infrastructure. It also calls for closing the first systems-control risk tranche and documenting the future application path. | Convert these outcomes into measurable acceptance tests, named owners, and evidence requirements. |
-| 26 | What availability, recovery, rollback, audit, and human-approval requirements apply? | **Partially answered** | The materials emphasize resilient access, recovery, human approval for core-maintenance automation, and managed infrastructure, but contain no measurable service levels or recovery objectives. | Define SLOs, RTO/RPO, rollback evidence, audit-event scope, incident handling, and human approval gates for the reference application. |
-| 27 | Who executes and signs off on acceptance testing? | **Unanswered** | Gordon and Kyle retain hands-on authority and Sam provides technical oversight, but no acceptance-test executor or final signatory is named. | Name business, technical, security, and final acceptance roles. |
-| 28 | What production disruption is acceptable during migration? | **Unanswered** | No maintenance-window, downtime, freeze, rollback-trigger, or user-communication tolerance was supplied. | Obtain application-owner approval before migration planning. |
+| ID | Question | Status | What is needed |
+| --- | --- | --- | --- |
+| 37 | What is the org structure after the split? | **Answered - verified** | Capital Factory is the venture fund. Station Austin is the coworking space, events, mentoring, and memberships. Station Northwest Arkansas and Station DC also exist. |
+| 38 | What is Station's AI maturity? | **Answered - verified** | "They are only using Claude as a chatbot. They're not building apps at all. They don't even have GitHub." |
+| 39 | What repeated, human-intensive work exists at Station? | **Unanswered** | Interviews with Station Austin leadership first. Two candidates the sponsor named: event programming, with SXSW planning cited as enormous, and grant writing, both finding opportunities and assisting with the writing. |
+| 40 | Who at Station Austin should be interviewed, and when? | **Unanswered** | Names and a window inside the first three weeks. |
+| 41 | Does the empty-estate case break any v0 requirement? | **Unanswered** | Every component must be valid against zero capabilities. A registry with nothing in it, a sweep with nothing to find, and a discovery query that always returns no match must all be correct states. Station is a stronger test of the architecture than Capital Factory is. |
+| 42 | What does "the scaffold" include? | **Partially answered** | The sponsor: "We can go get them set up on GitHub using the right way. We can get them set up with whatever the architecture is. We get their OS set up. Boom, bring it over there. Don't bring all the apps and all this stuff, but just bring the environment." Define the minimum portable set. |
 
-## P2 - Budget and capacity
+---
 
-| ID | Question | Current status | Evidence-based answer | Remaining confirmation |
-| --- | --- | --- | --- | --- |
-| 29 | Does the stated $10,000 monthly budget cover only operator labor? | **Answered - reported** | The mandate calls this the working contractor budget for one full-time operator-engineer. | Confirm taxes/fees, equipment, travel, and whether any delivery expenses are included contractually. |
-| 30 | What additional platform budget is available? | **Unanswered** | No separate cloud, security, observability, model/API, tooling, or contingency budget is stated. | Approve a non-labor budget or explicit spending thresholds. |
-| 31 | Which internal engineers or volunteers are available? | **Partially answered** | The mandate allows volunteer engineers working 8-10 hours per week on bounded projects under the operator's program ownership. | Confirm names, skills, number of contributors, start dates, availability, conflicts, and assignment authority. |
-| 32 | What SaaS, cloud, and AI usage data can support cost modeling? | **Answered - reported as pending** | Financial SaaS data remains outstanding. The requested fields are spend, seats, contract terms, renewal dates, and usage. No complete cloud or AI token/cost dataset is identified. | Obtain the financial SaaS dataset plus cloud invoices, AI-provider usage exports, account/project mappings, and cost owners. |
+## Out of scope: identity, security, and systems administration
 
-## Questions that can be removed from the initial stakeholder interview
+The sponsor raised this himself and assigned it elsewhere:
 
-The following no longer need to be asked as open-ended questions; they should be presented for confirmation:
+> "Josh Baer was basically the system admin for everything. We've recovered that. We got access to his YubiKey and his 1Password account. And so we've moved that over to his chief of staff. That's not the right way to do it. I am not sure that you are the right person to help me. I think there is probably an IT person that I need to bring in."
 
-1. The proposed program combines operator engagement, systems/IAM stabilization, a shared-core release, and one managed priority workflow.
-2. Gordon is executive sponsor, Kyle provides day-to-day direction, and Sam provides technical oversight.
-3. VA School was the recommended immediate proof point in the August 6 mandate.
-4. The working contractor budget is $10,000 per month.
-5. Volunteers may take bounded projects at approximately 8-10 hours per week while the operator retains integration ownership.
-6. Day-90 proof consists of a practical IAM model, a working shared-core release, and one priority workflow on managed infrastructure.
-7. Financial SaaS data was still pending when the mandate was written.
+He also declined an introduction for now: "hang tight on that. Don't make an introduction, just know that it's on my mind."
 
-## Highest-value unresolved questions for the first CF session
+The previous version of this document carried six questions here (19 through 24) and the previous 90-day plan carried an IAM workstream. Both are withdrawn. What remains is an obligation to record, not to remediate.
 
-To avoid overwhelming stakeholders, the first working session should focus on these eight decisions:
+**Carried as a Milestone 1 handoff for the incoming IT consultant, observation only:**
 
-1. Is the Claude target architecture approved, or may the operator revise it after technical validation?
-2. Does VA School remain the Day-90 proof point, and who accepts it?
-3. What changed in the application estate after July 22, 2026?
-4. Who owns the platform after Day 90?
-5. Which production, security, and data-policy constraints govern the reference application?
-6. Which repository, hosting, identity, and billing access can be approved for the initial audit?
-7. What non-labor budget and spending authority are available?
-8. What is explicitly outside the 90-day mandate?
+- Personal identities holding system-admin rights on business-critical accounts, including the sponsor's own 1Password identity on roughly ten key accounts, which he named as a concern.
+- Credentials embedded in application code or local environments, found incidentally while mapping the tool layer.
+- Applications running on employee machines, which is a platform coverage gap as well as an access one.
+- Systems reached by an application whose administrator or long-term owner is unknown.
+
+**Still needed from Capital Factory, because the product depends on it and the IT consultant does not gate it:**
+
+| ID | Question | Status | What is needed |
+| --- | --- | --- | --- |
+| 22 | May prompts, responses, tool inputs, and traces be stored? | **Unanswered** | A decision from a named data-policy owner, by data classification. This gates how deep the telemetry in the console can go. |
+| 43 | Who is the data-policy owner? | **Unanswered** | A name. |
+
+---
+
+## P2 - Budget
+
+| ID | Question | Status | What is needed |
+| --- | --- | --- | --- |
+| 30 | What non-labour platform budget is available? | **Unanswered** | Not raised on the call. Rough shape is $100 to $400 a month self-hosted, or $500 to $2,000 managed. See `technical-stack.md`. |
+| 32 | What usage and cost data supports the model-routing case? | **Unanswered** | AI provider usage exports and account mappings. Without these, the per-function routing saving in Milestone 5 cannot be measured, only asserted. |
+
+---
+
+## The first working session
+
+Six items, in this order.
+
+1. Approve read-only access to the five repositories and name the technical contact. Nothing starts without this.
+2. Confirm the architecture position in `architecture-decision.md`, or argue with it. The reasoning is written down specifically so it can be argued with.
+3. Name the Station Austin contacts and a window in the first three weeks.
+4. Confirm the tool layer is genuinely unknown, so that Milestone 1 is scoped to find out rather than to confirm.
+5. Name a data-policy owner.
+6. Confirm Milestone 1 and its acceptance test.
+
+Everything else waits for evidence.
+
+---
 
 ## Initial read-only access requested
 
-Access should be time-bounded, least-privilege, individually assigned, and protected with MFA. Secret values and unrestricted production data are not required for the initial audit.
+Time-bounded, least-privilege, individually assigned, MFA-protected. No secret values and no unrestricted production data.
 
-| System | Initial access | Purpose | Approval owner | Status |
-| --- | --- | --- | --- | --- |
-| GitHub | Organization/repository read | Verify repositories, dependencies, workflows, owners, and controls | To confirm | Not requested |
-| Vercel and other hosting | Project viewer | Map deployments, domains, environments, and runtime ownership | To confirm | Not requested |
-| 1Password | Guided review or scoped metadata | Understand vault and machine-identity model without exporting secrets | To confirm | Not requested |
-| Google Workspace | Admin-led configuration review | Understand identity, MFA, recovery, and offboarding | To confirm | Not requested |
-| AI provider accounts | Usage/billing viewer | Map providers, keys, models, tokens, and costs | To confirm | Not requested |
-| Monitoring platforms | Viewer | Assess errors, uptime, traces, and alert ownership | To confirm | Not requested |
-| Asana or delivery system | Scoped viewer | Understand active backlog, incidents, and ownership | To confirm | Not requested |
+| System | Initial access | Purpose | Status |
+| --- | --- | --- | --- |
+| GitHub | Organization and repository read | Verify the estate, dependencies, workflows, owners, controls | Not requested |
+| Vercel and other hosting | Project viewer | Map deployments, environments, runtime ownership | Not requested |
+| AI provider accounts | Usage and billing viewer | Map models, tokens, and cost for the routing case | Not requested |
+| Monitoring platforms | Viewer | Assess errors, traces, and alert ownership | Not requested |
+
+1Password and Google Workspace admin review have been dropped from this request. They belong to the IT and security engagement, not this one.
+
+---
 
 ## Minimum audit outputs
 
-The initial audit should produce:
-
-1. A verified application and system inventory for priority assets.
-2. A stakeholder and ownership map.
-3. An access and administrative-risk summary.
-4. A current-state architecture and deployment map.
-5. A prioritized list of shared-capability extraction candidates.
-6. A validated reference application and Day-90 acceptance criteria.
-7. Decisions or decision owners for unresolved stack choices.
+1. Verified estate register with live-versus-dormant status.
+2. Tool-layer map: how every application reaches every system.
+3. Ownership map for priority applications.
+4. Access and credential risk handoff for the incoming IT consultant, observation only.
+5. Station opportunity notes, no proposals.
+6. Evaluation coverage baseline, which sets the extraction cap.
